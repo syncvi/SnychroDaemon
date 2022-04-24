@@ -56,7 +56,7 @@ int main(int argc, char* argv[]){
     syslog(LOG_NOTICE, "MAIN: Task has been started.");
 
     int choice;
-    //if flag requires additional argument, like -s [filesize], thus, another switch will use choiceOptionx
+    //if flag requires additional argument, like -s [filesize], thus, another switch will use choiceOption
     int choiceOption; 
     int isRecursive = 0;
 
