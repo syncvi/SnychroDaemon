@@ -51,7 +51,7 @@ int main(int argc, char* argv[]){
         }
         
         
-    }
+    } //a change
 
     syslog(LOG_NOTICE, "MAIN: Task has been started.");
 
