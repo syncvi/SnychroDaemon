@@ -19,7 +19,7 @@ void handler(int signum){
     }
 }
 
-void sleeper(int time){
+void bigSleeping(int time){
     int i = 0;
     while(i<time)
     {
