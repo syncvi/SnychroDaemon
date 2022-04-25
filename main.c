@@ -161,6 +161,7 @@ int main(int argc, char* argv[])
     bigSleeping(time);
     browseDirectories(source, destination, isRecursive, filesize);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
+    printf("Copying files done\n");
     closelog();
     exit(EXIT_SUCCESS);
 }

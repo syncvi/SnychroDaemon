@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <time.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -50,11 +51,7 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
     perror("Stat file from copying function error:");
     exit(EXIT_FAILURE);
   }
-  if (stat((destinationPath), &d_copy) == -1)
-  {
-    perror("Stat file from copying function error:");
-    exit(EXIT_FAILURE);
-  }
+  stat((destinationPath), &d_copy);
   if (s_copy.st_size == d_copy.st_size)
   {
     return 1;
@@ -64,6 +61,24 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
     return 0;
   }
 }
+
+//check if directory exists 
+int checkIfDirectoryExists(char* path)
+{
+  struct stat s_copy;
+  stat(path, &s_copy);
+
+  if (S_ISDIR(s_copy.st_mode))
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+
 
 // create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
 void copyBigFiles(char *entry_path_source, char *entry_path_destination)
@@ -98,8 +113,6 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 
 void copySmallFiles(char *entry_path_source, char *entry_path_destination)
 {
-  printf("Source %s\n", entry_path_source);
-  printf("Destination %s\n", entry_path_destination);
   syslog(LOG_NOTICE, "Kopiowanie małego pliku:%s do %s poprzez read/write", entry_path_source, entry_path_destination);
   int src_fd, dst_fd, n;
   unsigned char buffer[4096];
@@ -160,11 +173,17 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive,
       {
         if (isRecursive)
         {
-          browseDirectories(path, destinationPath, isRecursive, size);
+          if(checkIfDirectoryExists(destination) == 0)
+          {
+            syslog(LOG_NOTICE, "Tworzenie katalogu: %s", destination);
+            mkdir(destination, S_IRWXU | S_IRWXG | S_IROTH);
+          }
+          browseDirectories(path, destination, isRecursive, size);
         }
       }
-      else if (checkIfFileExists(path, destination))
-      {
+     
+      else if (checkIfFileExists(path, destination) == 1)
+      { 
         syslog(LOG_NOTICE, "Plik %s już istnieje w %s", entry->d_name, destinationPath);
       }
       else
@@ -174,5 +193,5 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive,
     }
   }
   closedir(dir);
-  printf("Copying files done\n");
 }
+
