@@ -1,6 +1,7 @@
 #ifndef FUNNIES_H
 #define FUNNIES_H
 #include "funnies.h"
+<<<<<<< HEAD
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -19,4 +20,12 @@
 void instruction_manual();
 void deleteAll(char* givenPath);
 time_t timeGetter(char *time);
+=======
+
+/*--------------FUNCTIONS GO THERE--------------*/
+void instruction_manual();
+void deleteAll(char* givenPath);
+time_h timeGetter(char *time);
+off_t sizeGetter(char *size);
+>>>>>>> 4eef5e08709c0531c41098c745c380c82e6c6b7d
 #endif
