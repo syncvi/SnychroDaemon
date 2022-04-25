@@ -9,3 +9,7 @@ functionality.o: functionality.c funnies.h
 
 clean: 
 	rm -f *.o syndi
+reload:
+	rm -f *.o syndi
+	make
+	

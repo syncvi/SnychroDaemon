@@ -15,13 +15,14 @@
 #include <fcntl.h>
 #include <syslog.h>
 #include <sys/sendfile.h>
+#include <utime.h>
 
-time_t timeGetter(char* time)
+time_t timeGetter(char *time)
 {
   struct stat _time;
   if (stat(time, &_time) == -1)
   {
-    syslog(LOG_ERR, "Sth gone wrong with setting time!!! %s", time);
+    syslog(LOG_ERR, "TIME: Error while setting time. %s", time);
   }
   return _time.st_mtime;
 }
@@ -43,19 +44,74 @@ void instruction_manual()
   fclose(fp);
 }
 
-//check if file already exists in destination
-int checkIfFileExists(char* sourcePath, char* destinationPath)
+// Function that deletes given file
+void deleteFile(char *path)
+{
+  if (remove(path) == -1)
+  {
+    syslog(LOG_ERR, "DELETE: Error while deleting file: %s", path);
+  }
+}
+
+// Check if modification date of two files are equal
+bool isModified(char *path1, char *path2)
+{
+  struct stat _time1;
+  struct stat _time2;
+  if (stat(path1, &_time1) == -1)
+  {
+    syslog(LOG_ERR, "ISMODIFIED: Error while checking time. %s", path1);
+  }
+  if (stat(path2, &_time2) == -1)
+  {
+    syslog(LOG_ERR, "ISMODIFIED: Error while checking time. %s", path2);
+  }
+  if (_time1.st_mtime == _time2.st_mtime)
+  {
+    return 1;
+  }
+  return 0;
+}
+
+// set modification date of destination file to source file
+void setModified(char *source, char *destination)
+{
+  struct stat _time;
+  if (stat(source, &_time) == -1)
+  {
+    syslog(LOG_ERR, "SETMODIFIED: Error while checking time. %s", source);
+  }
+  struct utimbuf _time_buf;
+  _time_buf.actime = _time.st_atime;
+  _time_buf.modtime = _time.st_mtime;
+  if (utime(destination, &_time_buf) == -1)
+  {
+    syslog(LOG_ERR, "SETMODIFIED: Error while setting time. %s", destination);
+  }
+}
+
+// check if file already exists in destination
+int checkIfFileExists(char *sourcePath, char *destinationPath)
 {
   struct stat s_copy, d_copy;
   if (stat((sourcePath), &s_copy) == -1)
   {
-    perror("Stat file from copying function error:");
+    syslog(LOG_ERR, "CHECK: Error while checking if source file exists: %s", sourcePath);
+    printf("Error: could not open file %s", sourcePath);
     exit(EXIT_FAILURE);
   }
   stat((destinationPath), &d_copy);
   if (s_copy.st_size == d_copy.st_size)
   {
-    return 1;
+    if(isModified(sourcePath, destinationPath))
+    {
+      return 1;
+    }
+    else
+    {
+      setModified(sourcePath, destinationPath);
+      return 1;
+    }
   }
   else
   {
@@ -63,8 +119,8 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
   }
 }
 
-//check if destination directory exists
-int checkIfDirectoryExists(char* path)
+// check if destination directory exists
+int checkIfDirectoryExists(char *path)
 {
   struct stat s_copy;
   stat(path, &s_copy);
@@ -88,7 +144,7 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
   off_t offset = 0;
   source_fd = open(entry_path_source, O_RDONLY, S_IRWXU | S_IRWXG | S_IROTH);
   if (source_fd == -1)
-  { 
+  {
     syslog(LOG_ERR, "COPY: Error opening source file %s while copying big files", entry_path_source);
     perror("Source_fd error:");
     exit(EXIT_FAILURE);
@@ -112,7 +168,7 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
   close(destination_fd);
 }
 
-//Function copying files smaller than gives size if parameter -T was used
+// Function copying files smaller than gives size if parameter -T was used
 void copySmallFiles(char *entry_path_source, char *entry_path_destination)
 {
   syslog(LOG_NOTICE, "COPY: Copying small files from %s to %s", entry_path_source, entry_path_destination);
@@ -136,14 +192,26 @@ void copySmallFiles(char *entry_path_source, char *entry_path_destination)
   }
 
   while ((n = read(src_fd, buffer, sizeof(buffer))) > 0)
-    write(dst_fd, buffer, n);
-
+  {
+    if (write(dst_fd, buffer, n) != n)
+    {
+      syslog(LOG_ERR, "COPY: Error writing to destination file %s while copying small files", entry_path_destination);
+      printf("Error writing to destination file: %s\n", entry_path_destination);
+      exit(EXIT_FAILURE);
+    }
+  }
+  if (n < 0)
+  {
+    syslog(LOG_ERR, "COPY: Error reading from source file %s while copying small files", entry_path_source);
+    printf("Error reading from source file: %s\n", entry_path_source);
+    exit(EXIT_FAILURE);
+  }
   close(src_fd);
   close(dst_fd);
 }
 
-//Function checking which copy function to use
-void howToCopy(char* sourcePath, char* destinationPath, int size)
+// Function checking which copy function to use
+void howToCopy(char *sourcePath, char *destinationPath, int size)
 {
   struct stat f_copy;
   if (stat((sourcePath), &f_copy) == -1)
@@ -158,10 +226,10 @@ void howToCopy(char* sourcePath, char* destinationPath, int size)
     copySmallFiles(sourcePath, destinationPath);
 }
 
-//Main function browsing given directory and copying files to destination
-void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive, int size)
+// Main function browsing given directory and copying files to destination
+void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive, int size)
 {
-  DIR* dir;
+  DIR *dir;
   struct dirent *entry;
   char path[1024];
   char destination[1024];
@@ -180,7 +248,7 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive,
       {
         if (isRecursive)
         {
-          if(checkIfDirectoryExists(destination) == 0)
+          if (checkIfDirectoryExists(destination) == 0)
           {
             syslog(LOG_NOTICE, "BROWSE: Creating directory %s", destination);
             mkdir(destination, S_IRWXU | S_IRWXG | S_IROTH);
@@ -188,17 +256,19 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive,
           browseDirectories(path, destination, isRecursive, size);
         }
       }
-     
-      else if (checkIfFileExists(path, destination) == 1)
-      { 
-        syslog(LOG_NOTICE, "BROWSE: File %s already exists in %s", entry->d_name, destinationPath);
-      }
+
       else
       {
-        howToCopy(path, destination, size);
+        if (checkIfFileExists(path, destination) == 1)
+        {
+          syslog(LOG_NOTICE, "BROWSE: File %s already exists in %s", entry->d_name, destinationPath);
+        }
+        else
+        {
+          howToCopy(path, destination, size);
+        }
       }
     }
   }
   closedir(dir);
 }
-
