@@ -14,6 +14,15 @@
 #include <fcntl.h>
 #include <syslog.h>
 #include <sys/sendfile.h>
+time_t timeGetter(char *time)
+{
+    struct stat _time;
+    if(stat(time, &_time) == -1)
+    {
+        syslog(LOG_ERR, "Sth gone wrong with setting time!!!", time);
+    }
+    return _time.st_mtime;
+}
 void instruction_manual()
 {
     syslog(LOG_NOTICE, "Displaying manual page...");
@@ -40,14 +49,14 @@ int appendSlash(char* entry_path, int path_len)
   }
   return 0;
 }
-void deleteAll(char* givenPath)
+void deleteAll(char* givenPath) //wiper
 {
     DIR* dir;
     struct dirent* entry;
     char path[1024];
     if (!(dir = opendir(givenPath)))
     {
-        syslog(LOG_ERR, "FUN: Could not open directory");
+        syslog(LOG_ERR, "WIPER: Could not open directory");
         return;
     }
     while ((entry = readdir(dir)) != NULL)
@@ -63,7 +72,7 @@ void deleteAll(char* givenPath)
 
 void copyFiles(char* sourcePath, char* destinationPath)
 {
-  syslog(LOG_NOTICE, "copyFiles: copying files using sendfile...", sourcePath, destinationPath);
+  syslog(LOG_NOTICE, "COPIER: copying files using sendfile...", sourcePath, destinationPath);
   int sourceFolder;
   int destinationFolder;
   struct stat status;
@@ -72,7 +81,7 @@ void copyFiles(char* sourcePath, char* destinationPath)
   sourceFolder = open(sourcePath, O_RDONLY, S_IRWXU | S_IRWXG | S_IROTH);
   if (sourceFolder == -1)
   {
-    perror("Source_fd error:");
+    perror("COPIER: Source_fd error:");
     exit(EXIT_FAILURE);
   }
 
@@ -82,12 +91,12 @@ void copyFiles(char* sourcePath, char* destinationPath)
 
   if (destinationFolder == -1)
   {
-    perror("Destination_fd error:");
+    perror("COPIER: Destination_fd error:");
     exit(EXIT_FAILURE);
   }
   if (sendfile(destinationFolder, sourceFolder, &offset, status.st_size) == -1)
   {
-    perror("Sendfile error:");
+    perror("COPIER: Sendfile error:");
     exit(EXIT_FAILURE);
   }
 
@@ -95,8 +104,7 @@ void copyFiles(char* sourcePath, char* destinationPath)
   close(destinationFolder);
 }
 
-
-void browseDirectory(char* sourcePath, char* destinationPath, int isRecursive)
+void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
 {
   syslog(LOG_NOTICE, "BROWSER: Browse directory: %s", sourcePath);
   DIR* dir;
@@ -116,7 +124,7 @@ void browseDirectory(char* sourcePath, char* destinationPath, int isRecursive)
       {
         if (entry->d_type == DT_DIR)
         {
-          browseDirectory(path, destinationPath, isRecursive);
+          browseDirectories(path, destinationPath, isRecursive);
         }
         else
         {
@@ -127,7 +135,7 @@ void browseDirectory(char* sourcePath, char* destinationPath, int isRecursive)
       {
         if (entry->d_type == DT_DIR)
         {
-          syslog(LOG_NOTICE, "FUN: Skipping directory: %s", path);
+          syslog(LOG_NOTICE, "BROWSER: Skipping directory: %s", path);
         }
         else
         {
@@ -139,18 +147,7 @@ void browseDirectory(char* sourcePath, char* destinationPath, int isRecursive)
   closedir(dir);
 }
 
-time_t timeGetter(char *time)
-{
-    struct stat _time;
-    if(stat(time, &_time) == -1)
-    {
-        syslog(LOG_ERR, "Sth gone wrong with setting time!!!", time);
-    }
-    return _time.st_mtime;
-}
-
-
-void compareFiles(char* sourcePath, char* destinationPath)
+void compareFiles(char* sourcePath, char* destinationPath) 
 {
   syslog(LOG_NOTICE, "COMPARER: Comparing files: %s", sourcePath);
   DIR* dir;
@@ -193,6 +190,7 @@ off_t sizeGetter(char *size)
     if(stat(size,&_size) == 0) return _size.st_size;
     return -99;
 }
+
 
 
 
