@@ -16,36 +16,37 @@
 #include <sys/sendfile.h>
 time_t timeGetter(char *time)
 {
-    struct stat _time;
-    if(stat(time, &_time) == -1)
-    {
-        syslog(LOG_ERR, "Sth gone wrong with setting time!!! %s" , time);
-    }
-    return _time.st_mtime;
+  struct stat _time;
+  if (stat(time, &_time) == -1)
+  {
+    syslog(LOG_ERR, "Sth gone wrong with setting time!!! %s", time);
+  }
+  return _time.st_mtime;
 }
 off_t sizeGetter(char *size)
 {
-    struct stat _size;
-    if(stat(size,&_size) == 0) return _size.st_size;
-    return -99;
+  struct stat _size;
+  if (stat(size, &_size) == 0)
+    return _size.st_size;
+  return -99;
 }
 void instruction_manual()
 {
-    syslog(LOG_NOTICE, "Displaying manual page...");
-    char *filename = "manual.txt";
-    FILE *fp = fopen(filename, "r");
+  syslog(LOG_NOTICE, "Displaying manual page...");
+  char *filename = "manual.txt";
+  FILE *fp = fopen(filename, "r");
 
-    if (fp == NULL)
-    {
-        printf("Error: could not open file %s", filename);
-        return;
-    }
-    char ch;
-    while ((ch = fgetc(fp)) != EOF)
-        putchar(ch);
-    fclose(fp);
+  if (fp == NULL)
+  {
+    printf("Error: could not open file %s", filename);
+    return;
+  }
+  char ch;
+  while ((ch = fgetc(fp)) != EOF)
+    putchar(ch);
+  fclose(fp);
 }
-int appendSlash(char* entry_path, int path_len)
+int appendSlash(char *entry_path, int path_len)
 {
   if (entry_path[path_len - 1] != '/')
   {
@@ -55,166 +56,93 @@ int appendSlash(char* entry_path, int path_len)
   }
   return 0;
 }
-void deleteAll(char* givenPath) //wiper
+void deleteAll(char *givenPath) // wiper
 {
-    DIR* dir;
-    struct dirent* entry;
-    char path[1024];
-    if (!(dir = opendir(givenPath)))
+  DIR *dir;
+  struct dirent *entry;
+  char path[1024];
+  if (!(dir = opendir(givenPath)))
+  {
+    syslog(LOG_ERR, "WIPER: Could not open directory");
+    return;
+  }
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
     {
-        syslog(LOG_ERR, "WIPER: Could not open directory");
-        return;
+      snprintf(path, 1024, "%s/%s", givenPath, entry->d_name);
+      remove(path);
     }
-    while ((entry = readdir(dir)) != NULL)
-    {
-        if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
-        {
-            snprintf(path, 1024, "%s/%s", givenPath, entry->d_name);
-            remove(path);
-        }
-    }
-    closedir(dir);
+  }
+  closedir(dir);
 }
 
-//create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
-void copyFiles(char* source, char* destination)
+// create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
+void copyFiles(char *source, char *destination)
 {
-    DIR* dir;
-    struct dirent* entry;
-    char path[1024];
-    if (!(dir = opendir(source)))
+  DIR *dir;
+  struct dirent *entry;
+  char path[1024];
+  if (!(dir = opendir(source)))
+  {
+    syslog(LOG_ERR, "COPY: Could not open directory");
+    return;
+  }
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
     {
-        syslog(LOG_ERR, "COPY: Could not open directory");
-        return;
-    }
-    while ((entry = readdir(dir)) != NULL)
-    {
-        if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+      snprintf(path, 1024, "%s/%s", source, entry->d_name);
+      if (entry->d_type == DT_DIR)
+      {
+        copyFiles(path, destination);
+      }
+      else
+      {
+        int fd_src = open(path, O_RDONLY);
+        int fd_dst = open(destination, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+        if (fd_src == -1 || fd_dst == -1)
         {
-            snprintf(path, 1024, "%s/%s", source, entry->d_name);
-            if (entry->d_type == DT_DIR)
-            {
-                copyFiles(path, destination);
-            }
-            else
-            {
-                int fd_src = open(path, O_RDONLY);
-                int fd_dst = open(destination, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
-                if (fd_src == -1 || fd_dst == -1)
-                {
-                    syslog(LOG_ERR, "COPY: Could not open file");
-                    return;
-                }
-                if (sendfile(fd_dst, fd_src, NULL, sizeGetter(path)) == -1)
-                {
-                    syslog(LOG_ERR, "COPY: Could not copy file");
-                    return;
-                }
-            }
+          syslog(LOG_ERR, "COPY: Could not open file");
+          return;
         }
+        if (sendfile(fd_dst, fd_src, NULL, sizeGetter(path)) == -1)
+        {
+          syslog(LOG_ERR, "COPY: Could not copy file");
+          return;
+        }
+      }
     }
-    closedir(dir);
+  }
+  closedir(dir);
 }
-void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
+void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive)
 {
-    DIR* dir;
-    struct dirent* entry;
-    char path[1024];
-    if (!(dir = opendir(sourcePath)))
+  DIR *dir;
+  struct dirent *entry;
+  char path[1024];
+  if (!(dir = opendir(sourcePath)))
+  {
+    syslog(LOG_ERR, "BROWSE: Could not open directory");
+    return;
+  }
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
     {
-        syslog(LOG_ERR, "BROWSE: Could not open directory");
-        return;
-    }
-    while ((entry = readdir(dir)) != NULL)
-    {
-        if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+      snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
+      if (entry->d_type == DT_DIR)
+      {
+        if (isRecursive)
         {
-            snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
-            if (entry->d_type == DT_DIR)
-            {
-                if (isRecursive)
-                {
-                    browseDirectories(path, destinationPath, isRecursive);
-                }
-            }
-            else
-            {
-                copyFiles(path, destinationPath);
-            }
+          browseDirectories(path, destinationPath, isRecursive);
         }
+      }
+      else
+      {
+        copyFiles(path, destinationPath);
+      }
     }
-    closedir(dir);
+  }
+  closedir(dir);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
