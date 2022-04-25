@@ -23,6 +23,12 @@ time_t timeGetter(char *time)
     }
     return _time.st_mtime;
 }
+off_t sizeGetter(char *size)
+{
+    struct stat _size;
+    if(stat(size,&_size) == 0) return _size.st_size;
+    return -99;
+}
 void instruction_manual()
 {
     syslog(LOG_NOTICE, "Displaying manual page...");
@@ -184,12 +190,7 @@ void compareFiles(char* sourcePath, char* destinationPath)
   closedir(dir);
 }
 
-off_t sizeGetter(char *size)
-{
-    struct stat _size;
-    if(stat(size,&_size) == 0) return _size.st_size;
-    return -99;
-}
+
 
 
 

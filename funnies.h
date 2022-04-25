@@ -17,5 +17,11 @@
 #include <sys/sendfile.h>
 /*--------------FUNCTIONS GO THERE--------------*/
 void instruction_manual();
-
+time_t timeGetter(char *time);
+off_t sizeGetter(char *size);
+int appendSlash(char* entry_path, int path_len);
+void deleteAll(char* givenPath);
+void copyFile(char* source, char* destination);
+void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive);
+void compareFiles(char* sourcePath, char* destinationPath);
 #endif
