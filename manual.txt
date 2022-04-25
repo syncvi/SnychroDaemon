@@ -15,4 +15,4 @@ Przykładowe uruchomienia:
 ./projekt -d /home/ffo -s /home/folder1/f12345  -S 20
     #Kopiuje katalog "home/ffo" do katalogu "/home/folder1/f12345" po czasie 20 sekund
 ./projekt -h
-    #Wyświetla pomoc
+    #Wyświetla pomoc fajną
