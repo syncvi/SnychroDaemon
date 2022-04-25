@@ -138,6 +138,16 @@ void browseDirectory(char* sourcePath, char* destinationPath, int isRecursive)
   }
   closedir(dir);
 }
+time_t timeGetter(char *time)
+{
+    struct stat _time;
+    if(stat(time, &_time) == -1)
+    {
+        syslog(LOG_ERR, "Sth gone wrong with setting time!!!", time);
+    }
+    return _time.st_mtime;
+}
+
 
 
 //make a function that deletes file from directory if it's different from the on in the source
@@ -177,4 +187,73 @@ void compareFiles(char* sourcePath, char* destinationPath)
   }
   closedir(dir);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
