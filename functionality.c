@@ -38,7 +38,7 @@ void instruction_manual()
     if (fp == NULL)
     {
         printf("Error: could not open file %s", filename);
-        return 1;
+        return;
     }
     char ch;
     while ((ch = fgetc(fp)) != EOF)
