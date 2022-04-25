@@ -32,7 +32,7 @@ void bigSleeping(int time)
     }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 
     openlog("PROJECT: DEMON", LOG_PID | LOG_CONS, LOG_USER);
@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
     int time = 300;
     int filesize = __INT_MAX__;
 
-    char *source = argv[1];
-    char *destination = argv[2];
+    char* source = argv[1];
+    char* destination = argv[2];
     struct stat status1;
     struct stat status2; // for testing a file type
     // https://www.gnu.org/software/libc/manual/html_node/Testing-File-Type.html
@@ -97,7 +97,8 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    while ((choice = getopt(argc, argv, "R:T:S ")) != -1)
+    
+    while ((choice = getopt(argc, argv, "Rh:T:S ")) != -1)
     {
         switch (choice)
         {
@@ -127,7 +128,7 @@ int main(int argc, char *argv[])
             abort();
         }
     }
-
+    
     /*------------------------------------------------CREATING A DAEMON------------------------------------*/
     pid_t pid, sid;
 
@@ -157,7 +158,6 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     /*----------------------------------------------------------------------------------------------------*/
-
-    browseDirectories(source, destination, isRecursive);
+    
     return 0;
 }

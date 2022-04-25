@@ -14,7 +14,7 @@
 #include <fcntl.h>
 #include <syslog.h>
 #include <sys/sendfile.h>
-time_t timeGetter(char *time)
+time_t timeGetter(char* time)
 {
   struct stat _time;
   if (stat(time, &_time) == -1)
@@ -23,7 +23,7 @@ time_t timeGetter(char *time)
   }
   return _time.st_mtime;
 }
-off_t sizeGetter(char *size)
+off_t sizeGetter(char* size)
 {
   struct stat _size;
   if (stat(size, &_size) == 0)
@@ -46,7 +46,7 @@ void instruction_manual()
     putchar(ch);
   fclose(fp);
 }
-int appendSlash(char *entry_path, int path_len)
+int appendSlash(char* entry_path, int path_len)
 {
   if (entry_path[path_len - 1] != '/')
   {
@@ -56,7 +56,7 @@ int appendSlash(char *entry_path, int path_len)
   }
   return 0;
 }
-void deleteAll(char *givenPath) // wiper
+void deleteAll(char* givenPath) // wiper
 {
   DIR *dir;
   struct dirent *entry;
@@ -77,12 +77,14 @@ void deleteAll(char *givenPath) // wiper
   closedir(dir);
 }
 
-// create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
-void copyFiles(char *source, char *destination)
+
+void copyFiles(char* source, char* destination)
 {
-  DIR *dir;
-  struct dirent *entry;
+  DIR* dir;
+  struct dirent* entry;
   char path[1024];
+  appendSlash(source, strlen(source));
+  appendSlash(destination, strlen(destination));
   if (!(dir = opendir(source)))
   {
     syslog(LOG_ERR, "COPY: Could not open directory");
@@ -116,11 +118,13 @@ void copyFiles(char *source, char *destination)
   }
   closedir(dir);
 }
-void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive)
+void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
 {
-  DIR *dir;
-  struct dirent *entry;
+  DIR* dir;
+  struct dirent* entry;
   char path[1024];
+  appendSlash(sourcePath, strlen(sourcePath));
+  appendSlash(destinationPath, strlen(destinationPath));
   if (!(dir = opendir(sourcePath)))
   {
     syslog(LOG_ERR, "BROWSE: Could not open directory");
