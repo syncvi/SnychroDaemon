@@ -115,8 +115,12 @@ int main(int argc, char* argv[]){
             choiceOption = atoi(optarg);
             break;
         default:
+<<<<<<< HEAD
             abort(); // or simply break, idk
 >>>>>>> a5c8a9d0ee6538825af1ad972dde9258ad8ea407
+=======
+            abort();
+>>>>>>> 581c9ab148bfd0e9e2dd43272a504c80e3cec48b
         }
     }
 
