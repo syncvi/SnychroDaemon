@@ -140,6 +140,43 @@ void browseDirectory(char* sourcePath, char* destinationPath, int isRecursive)
 }
 
 
+//make a function that deletes file from directory if it's different from the on in the source
+void compareFiles(char* sourcePath, char* destinationPath)
+{
+  syslog(LOG_NOTICE, "COMPARER: Comparing files: %s", sourcePath);
+  DIR* dir;
+  struct dirent* entry;
+  char path[1024];
+  if (!(dir = opendir(sourcePath)))
+  {
+    syslog(LOG_ERR, "COMPARER: Could not open directory");
+    return;
+  }
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+    {
+      snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
+      if (entry->d_type == DT_DIR)
+      {
+        compareFiles(path, destinationPath);
+      }
+      else
+      {
+        if (entry->d_type == DT_REG)
+        {
+          syslog(LOG_NOTICE, "COMPARER: Comparing file: %s", path);
+          if (strcmp(path, destinationPath))
+          {
+            syslog(LOG_NOTICE, "COMPARER: Deleting file: %s", path);
+            remove(path);
+          }
+        }
+      }
+    }
+  }
+  closedir(dir);
+}
 
 
 
