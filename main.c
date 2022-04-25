@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
             choiceOption = atoi(optarg);
             break;
         default:
-            abort(); // or simply break, idk
+            abort();
         }
     }
 
