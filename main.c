@@ -94,13 +94,18 @@ int main(int argc, char *argv[])
     }
 
     while ((choice = getopt(argc, argv, "Rd:")) != -1)
-    { // ADD MORE CASES LATER -t, -c, -s, w/e
+    {
         switch (choice)
         {
         case 'R':
             isRecursive = 1;
             break;
-
+        case 'T':
+            choiceOption = atoi(optarg);
+            break;
+        case 'S':
+            choiceOption = atoi(optarg);
+            break;
         default:
             abort(); // or simply break, idk
         }
