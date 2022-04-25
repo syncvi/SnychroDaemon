@@ -26,5 +26,8 @@
     "**/.*/**",
     "**/.vscode",
     "**/.vscode/**"
+  ],
+  "cSpell.words": [
+    "emon"
   ]
 }
