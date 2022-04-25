@@ -9,12 +9,13 @@
 #include <sys/stat.h>
 #include <string.h>
 volatile int flag = 0;
+
 void handler(int signum)
 {
     if (signum == SIGUSR1)
     {
-        syslog(LOG_NOTICE, "SIGUSR1 provided...");
-        syslog(LOG_NOTICE, "Waking up the d(a)emon...");
+        syslog(LOG_NOTICE, "MAIN: SIGUSR1 provided...");
+        syslog(LOG_NOTICE, "MAIN: Waking up the d(a)emon...");
         flag = 1;
     }
 }
@@ -34,7 +35,7 @@ void bigSleeping(int time)
 
 int main(int argc, char* argv[])
 {
-
+    /*------------------------------------Required inputs check------------------------------------*/
     openlog("PROJECT: DEMON", LOG_PID | LOG_CONS, LOG_USER);
 
     if (signal(SIGUSR1, handler) == SIG_ERR)
@@ -58,12 +59,12 @@ int main(int argc, char* argv[])
             syslog(LOG_NOTICE, "MAIN: No manual page displayed");
             exit(1);
         }
-    }
-
+    }   
+    /*------------------------------------Optional inputs check------------------------------------*/
     syslog(LOG_NOTICE, "MAIN: Task has been started.");
 
     int choice;
-    // if flag requires additional argument, like -s [filesize], thus, another switch will use choiceOption
+    // if flag requires additional argument, like -s [filesize], thus, another switch will use choice option
     int choiceOption;
     int isRecursive = 0;
     int time = 300;
@@ -73,31 +74,6 @@ int main(int argc, char* argv[])
     char* destination = argv[2];
     struct stat status1;
     struct stat status2; // for testing a file type
-    // https://www.gnu.org/software/libc/manual/html_node/Testing-File-Type.html
-
-    if (stat(source, &status1) == 0)
-        if (!S_ISDIR(status1.st_mode))
-        {
-            syslog(LOG_ERR, "MAIN: First argument is not a folder!");
-            fprintf(stderr, "First argument is not a folder!\n");
-            exit(EXIT_FAILURE);
-        }
-
-    if (stat(destination, &status2) == 0)
-        if (!S_ISDIR(status2.st_mode))
-        {
-            syslog(LOG_ERR, "MAIN: Second argument is not a folder!");
-            fprintf(stderr, "Second argument is not a folder!\n");
-            exit(EXIT_FAILURE);
-        }
-
-    if (strcmp(source, destination) == 0)
-    {
-        fprintf(stderr, "Source and destination directory are the same.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    
     while ((choice = getopt(argc, argv, "Rh:T:S:")) != -1)
     {
         switch (choice)
@@ -115,21 +91,45 @@ int main(int argc, char* argv[])
             switch (optopt)
             {
             case 'T':
+                syslog(LOG_ERR, "MAIN: Time option is invalid!");
                 fprintf(stderr, "Option -%c requires an argument.\n", optopt);
                 exit(EXIT_FAILURE);
                 break;
             case 'S':
+                syslog(LOG_ERR, "MAIN: Filesize option is invalid!");
                 fprintf(stderr, "Option -%c requires an argument.\n", optopt);
                 exit(EXIT_FAILURE);
                 break;
             }
+            syslog(LOG_ERR, "MAIN: Unknown argument was given!");
             fprintf(stderr, "Unknown option `-%c'.\n", optopt);
         default:
             abort();
         }
     }
-    
-    /*------------------------------------------------CREATING A DAEMON------------------------------------*/
+    /*------------------------------------Directories check------------------------------------*/
+    bigSleeping(time);
+    if (stat(source, &status1) == 0 && !S_ISDIR(status1.st_mode))
+    {
+        syslog(LOG_ERR, "MAIN: First argument is not a folder or doesn't exist!");
+        fprintf(stderr, "First argument is not a folder or doesn't exist!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (stat(destination, &status2) == 0 && !S_ISDIR(status2.st_mode))
+    {
+        syslog(LOG_ERR, "MAIN: Second argument is not a folder or doesn't exist!!");
+        fprintf(stderr, "Second argument is not a folder or doesn't exist!!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (strcmp(source, destination) == 0)
+    {
+        syslog(LOG_ERR, "MAIN: Source and destination are the same!");
+        fprintf(stderr, "Source and destination directory are the same.\n");
+        exit(EXIT_FAILURE);
+    }
+    /*------------------------------------Creating a Daemon------------------------------------*/
     pid_t pid, sid;
 
     pid = fork();
@@ -157,8 +157,7 @@ int main(int argc, char* argv[])
         syslog(LOG_ERR, "MAIN: chdir has failed.");
         exit(EXIT_FAILURE);
     }
-    /*----------------------------------------------------------------------------------------------------*/
-    bigSleeping(time);
+    /*------------------------------------Copying Files------------------------------------*/
     browseDirectories(source, destination, isRecursive, filesize);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
     printf("Copying files done\n");

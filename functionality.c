@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <syslog.h>
 #include <sys/sendfile.h>
+
 time_t timeGetter(char* time)
 {
   struct stat _time;
@@ -62,12 +63,11 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
   }
 }
 
-//check if directory exists 
+//check if destination directory exists
 int checkIfDirectoryExists(char* path)
 {
   struct stat s_copy;
   stat(path, &s_copy);
-
   if (S_ISDIR(s_copy.st_mode))
   {
     return 1;
@@ -78,19 +78,18 @@ int checkIfDirectoryExists(char* path)
   }
 }
 
-
-
 // create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
 void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 {
-  syslog(LOG_NOTICE, "Kopiowanie dużego pliku:%s do %s poprzez funkcję sendfile", entry_path_source, entry_path_destination);
+  syslog(LOG_NOTICE, "COPY: Copying big files from %s to %s", entry_path_source, entry_path_destination);
   int source_fd;
   int destination_fd;
   struct stat stat_buf;
   off_t offset = 0;
   source_fd = open(entry_path_source, O_RDONLY, S_IRWXU | S_IRWXG | S_IROTH);
   if (source_fd == -1)
-  {
+  { 
+    syslog(LOG_ERR, "COPY: Error opening source file %s while copying big files", entry_path_source);
     perror("Source_fd error:");
     exit(EXIT_FAILURE);
   }
@@ -98,11 +97,13 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
   destination_fd = open(entry_path_destination, O_WRONLY | O_CREAT, stat_buf.st_mode);
   if (destination_fd == -1)
   {
+    syslog(LOG_ERR, "COPY: Error opening destination file %s while copying big files", entry_path_destination);
     perror("Destination_fd error:");
     exit(EXIT_FAILURE);
   }
   if (sendfile(destination_fd, source_fd, &offset, stat_buf.st_size) == -1)
   {
+    syslog(LOG_ERR, "COPY: Error copying big files from %s to %s", entry_path_source, entry_path_destination);
     perror("Sendfile error:");
     exit(EXIT_FAILURE);
   }
@@ -111,23 +112,26 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
   close(destination_fd);
 }
 
+//Function copying files smaller than gives size if parameter -T was used
 void copySmallFiles(char *entry_path_source, char *entry_path_destination)
 {
-  syslog(LOG_NOTICE, "Kopiowanie małego pliku:%s do %s poprzez read/write", entry_path_source, entry_path_destination);
+  syslog(LOG_NOTICE, "COPY: Copying small files from %s to %s", entry_path_source, entry_path_destination);
   int src_fd, dst_fd, n;
   unsigned char buffer[4096];
 
   src_fd = open(entry_path_source, O_RDONLY);
   if (src_fd == -1)
   {
-    perror("CANNOT OPEN THE SOURCE FILE");
+    syslog(LOG_ERR, "COPY: Error opening source file %s while copying small files", entry_path_source);
+    printf("Error opening source file: %s\n", entry_path_source);
     exit(EXIT_FAILURE);
   }
 
   dst_fd = open(entry_path_destination, O_WRONLY | O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IROTH);
   if (dst_fd == -1)
   {
-    perror("CANNOT OPEN THE TARGET FILE");
+    syslog(LOG_ERR, "COPY: Error opening destination file %s while copying small files", entry_path_destination);
+    printf("Error opening destination file: %s\n", entry_path_destination);
     exit(EXIT_FAILURE);
   }
 
@@ -138,12 +142,14 @@ void copySmallFiles(char *entry_path_source, char *entry_path_destination)
   close(dst_fd);
 }
 
+//Function checking which copy function to use
 void howToCopy(char* sourcePath, char* destinationPath, int size)
 {
   struct stat f_copy;
   if (stat((sourcePath), &f_copy) == -1)
   {
-    perror("Stat file from copying function error:");
+    syslog(LOG_ERR, "COPY: Error getting file stats while copying %s to %s", sourcePath, destinationPath);
+    perror("Error getting file stats");
     exit(EXIT_FAILURE);
   }
   if ((f_copy.st_size) >= size)
@@ -152,6 +158,7 @@ void howToCopy(char* sourcePath, char* destinationPath, int size)
     copySmallFiles(sourcePath, destinationPath);
 }
 
+//Main function browsing given directory and copying files to destination
 void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive, int size)
 {
   DIR* dir;
@@ -175,7 +182,7 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive,
         {
           if(checkIfDirectoryExists(destination) == 0)
           {
-            syslog(LOG_NOTICE, "Tworzenie katalogu: %s", destination);
+            syslog(LOG_NOTICE, "BROWSE: Creating directory %s", destination);
             mkdir(destination, S_IRWXU | S_IRWXG | S_IROTH);
           }
           browseDirectories(path, destination, isRecursive, size);
@@ -184,7 +191,7 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive,
      
       else if (checkIfFileExists(path, destination) == 1)
       { 
-        syslog(LOG_NOTICE, "Plik %s już istnieje w %s", entry->d_name, destinationPath);
+        syslog(LOG_NOTICE, "BROWSE: File %s already exists in %s", entry->d_name, destinationPath);
       }
       else
       {
