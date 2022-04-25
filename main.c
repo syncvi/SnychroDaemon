@@ -6,10 +6,10 @@
 #include <getopt.h>
 #include <time.h>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/stat.h> 
 #include <string.h>
 volatile int flag = 0;
-
+int siema=3;
 void handler(int signum){
     if (signum == SIGUSR1)
     {
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
           exit(EXIT_FAILURE);
         }
 
-    while((choice=getopt(argc,argv,"Rh:")) != -1){ //ADD MORE CASES LATER -t, -c, -s, w/e
+    while((choice=getopt(argc,argv,"Rd:")) != -1){ //ADD MORE CASES LATER -t, -c, -s, w/e
         switch (choice){
             case 'R':
             isRecursive=1;
