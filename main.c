@@ -47,12 +47,14 @@ int main(int argc, char *argv[])
         printf("Would you like to see the manual page? (y/n)\n");
         char answer;
         scanf("%c", &answer);
-        if (answer == 'y' || answer == 'Y'){
+        if (answer == 'y' || answer == 'Y')
+        {
             instruction_manual();
             syslog(LOG_NOTICE, "MAIN: Manual page displayed");
             exit(1);
         }
-        else{
+        else
+        {
             syslog(LOG_NOTICE, "MAIN: No manual page displayed");
             exit(1);
         }
