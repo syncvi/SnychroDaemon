@@ -18,3 +18,13 @@ void deleteAll(char* givenPath)
     syslog(LOG_NOTICE, "Erasing  everything from: %s...\n ", givenPath);
 
 }
+time_t timeGetter(char *time)
+{
+    struct stat _time;
+    if(stat(time, &_time) == -1)
+    {
+        syslog(LOG_ERR, "Sth gone wrong with setting time!!!", time);
+    }
+    return _time.st_mtime;
+
+}
