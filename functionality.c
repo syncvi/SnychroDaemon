@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <syslog.h>
+#include <sys/mman.h>
 #include <sys/sendfile.h>
 #include <utime.h>
 
@@ -134,8 +135,8 @@ int checkIfDirectoryExists(char *path)
   }
 }
 
-// create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
-void copyBigFiles(char *entry_path_source, char *entry_path_destination)
+//Function that copies files from source to destination using sendfile
+/*void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 {
   syslog(LOG_NOTICE, "COPY: Copying big files from %s to %s", entry_path_source, entry_path_destination);
   int source_fd;
@@ -166,7 +167,63 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 
   close(source_fd);
   close(destination_fd);
+}*/
+
+//Copying big files from source to destination using mapping
+void copyBigFiles(char *entry_path_source, char *entry_path_destination)
+{
+  syslog(LOG_NOTICE, "COPY: Copying big files from %s to %s", entry_path_source, entry_path_destination);
+  int source_fd;
+  int destination_fd;
+  struct stat stat_buf;
+  off_t offset = 0;
+  source_fd = open(entry_path_source, O_RDONLY);
+  if (source_fd == -1)
+  {
+    syslog(LOG_ERR, "COPY: Error opening source file %s while copying big files", entry_path_source);
+    perror("Source_fd error:");
+    exit(EXIT_FAILURE);
+  }
+  if(fstat(source_fd, &stat_buf))
+  {
+    syslog(LOG_ERR, "COPY: Error getting file size of %s while copying big files", entry_path_source);
+    perror("Fstat error:");
+    exit(EXIT_FAILURE);
+  }
+  destination_fd = open(entry_path_destination, O_RDWR | O_CREAT | O_TRUNC, 0644);
+  if(ftruncate(destination_fd, stat_buf.st_size))
+  {
+    syslog(LOG_ERR, "COPY: Error truncating file %s while copying big files", entry_path_destination);
+    perror("Ftruncate error:");
+    exit(EXIT_FAILURE);
+  }
+  if (destination_fd == -1)
+  {
+    syslog(LOG_ERR, "COPY: Error opening destination file %s while copying big files", entry_path_destination);
+    perror("Destination_fd error:");
+    exit(EXIT_FAILURE);
+  }
+  char *source_map = mmap(NULL, stat_buf.st_size, PROT_READ, MAP_PRIVATE, source_fd, 0);
+  if (source_map == MAP_FAILED)
+  {
+    syslog(LOG_ERR, "COPY: Error mapping source file %s while copying big files", entry_path_source);
+    perror("Source_map error:");
+    exit(EXIT_FAILURE);
+  }
+  char *destination_map = mmap(NULL, stat_buf.st_size, PROT_WRITE, MAP_SHARED, destination_fd, 0);
+  if (destination_map == MAP_FAILED)
+  {
+    syslog(LOG_ERR, "COPY: Error mapping destination file %s while copying big files", entry_path_destination);
+    perror("Destination_map error:");
+    exit(EXIT_FAILURE);
+  }
+  memcpy(destination_map, source_map, stat_buf.st_size);
+  munmap(source_map, stat_buf.st_size);
+  munmap(destination_map, stat_buf.st_size);
+  close(source_fd);
+  close(destination_fd);
 }
+
 
 // Function copying files smaller than gives size if parameter -T was used
 void copySmallFiles(char *entry_path_source, char *entry_path_destination)
@@ -270,5 +327,6 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
       }
     }
   }
+  
   closedir(dir);
 }
