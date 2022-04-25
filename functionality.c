@@ -193,7 +193,49 @@ void compareFiles(char* sourcePath, char* destinationPath)
   }
   closedir(dir);
 }
-
+//compare files in source and destination, if they are different, delete the file in destination, ignore directories
+void compareDirectories(char* sourcePath, char* destinationPath, int isRecursive)
+{
+  syslog(LOG_NOTICE, "COMPARER: Comparing directories: %s", sourcePath);
+  DIR* dir;
+  struct dirent* entry;
+  char path[1024];
+  if (!(dir = opendir(sourcePath)))
+  {
+    syslog(LOG_ERR, "COMPARER: Could not open directory");
+    return;
+  }
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+    {
+      snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
+      if (isRecursive)
+      {
+        if (entry->d_type == DT_DIR)
+        {
+          compareDirectories(path, destinationPath, isRecursive);
+        }
+        else
+        {
+          compareFiles(path, destinationPath);
+        }
+      }
+      else
+      {
+        if (entry->d_type == DT_DIR)
+        {
+          syslog(LOG_NOTICE, "COMPARER: Skipping directory: %s", path);
+        }
+        else
+        {
+          compareFiles(path, destinationPath);
+        }
+      }
+    }
+  }
+  closedir(dir);
+}
 
 
 
