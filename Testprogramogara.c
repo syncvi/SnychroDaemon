@@ -3,7 +3,7 @@
 int main()
 {
     //est
-    
+    .//est
     char *filename = "manual.txt";
     FILE *fp = fopen(filename, "r");
 
