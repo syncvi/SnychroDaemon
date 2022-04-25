@@ -116,6 +116,10 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
   DIR* dir;
   struct dirent* entry;
   char path[1024];
+
+  appendSlash(sourcePath, strlen(sourcePath));
+  appendSlash(destinationPath, strlen(destinationPath));
+
   if (!(dir = opendir(sourcePath)))
   {
     syslog(LOG_ERR, "BROWSER: Could not open directory");
