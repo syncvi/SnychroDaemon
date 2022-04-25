@@ -24,4 +24,5 @@ void deleteAll(char* givenPath);
 void copyFiles(char* source, char* destination);
 void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive);
 void compareFiles(char* sourcePath, char* destinationPath);
+void compareDirectories(char* sourcePath, char* destinationPath, int isRecursive);
 #endif

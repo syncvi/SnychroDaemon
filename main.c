@@ -133,5 +133,8 @@ int main(int argc, char* argv[]){
                 exit(EXIT_FAILURE);
         }
 /*----------------------------------------------------------------------------------------------------*/
+
+
+    browseDirectories(source, destination, isRecursive);
     return 0;
 }

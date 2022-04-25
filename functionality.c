@@ -76,166 +76,77 @@ void deleteAll(char* givenPath) //wiper
     closedir(dir);
 }
 
-void copyFiles(char* sourcePath, char* destinationPath)
+//create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
+void copyFiles(char* source, char* destination)
 {
-  syslog(LOG_NOTICE, "COPIER: copying files using sendfile...%s | %s", sourcePath, destinationPath);
-  int sourceFolder;
-  int destinationFolder;
-  struct stat status;
-  off_t offset = 0;
-
-  sourceFolder = open(sourcePath, O_RDONLY, S_IRWXU | S_IRWXG | S_IROTH);
-  if (sourceFolder == -1)
-  {
-    perror("COPIER: Source_fd error:");
-    exit(EXIT_FAILURE);
-  }
-
-  fstat(sourceFolder, &status);
-  destinationFolder = open(destinationPath, O_WRONLY | O_CREAT, status.st_mode);
-
-
-  if (destinationFolder == -1)
-  {
-    perror("COPIER: Destination_fd error:");
-    exit(EXIT_FAILURE);
-  }
-  if (sendfile(destinationFolder, sourceFolder, &offset, status.st_size) == -1)
-  {
-    perror("COPIER: Sendfile error:");
-    exit(EXIT_FAILURE);
-  }
-
-  close(sourceFolder);
-  close(destinationFolder);
+    DIR* dir;
+    struct dirent* entry;
+    char path[1024];
+    if (!(dir = opendir(source)))
+    {
+        syslog(LOG_ERR, "COPY: Could not open directory");
+        return;
+    }
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+        {
+            snprintf(path, 1024, "%s/%s", source, entry->d_name);
+            if (entry->d_type == DT_DIR)
+            {
+                copyFiles(path, destination);
+            }
+            else
+            {
+                int fd_src = open(path, O_RDONLY);
+                int fd_dst = open(destination, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+                if (fd_src == -1 || fd_dst == -1)
+                {
+                    syslog(LOG_ERR, "COPY: Could not open file");
+                    return;
+                }
+                if (sendfile(fd_dst, fd_src, NULL, sizeGetter(path)) == -1)
+                {
+                    syslog(LOG_ERR, "COPY: Could not copy file");
+                    return;
+                }
+            }
+        }
+    }
+    closedir(dir);
 }
-
 void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
 {
-  syslog(LOG_NOTICE, "BROWSER: Browse directory: %s", sourcePath);
-  DIR* dir;
-  struct dirent* entry;
-  char path[1024];
-
-  appendSlash(sourcePath, strlen(sourcePath));
-  appendSlash(destinationPath, strlen(destinationPath));
-
-  if (!(dir = opendir(sourcePath)))
-  {
-    syslog(LOG_ERR, "BROWSER: Could not open directory");
-    return;
-  }
-  while ((entry = readdir(dir)) != NULL)
-  {
-    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+    DIR* dir;
+    struct dirent* entry;
+    char path[1024];
+    if (!(dir = opendir(sourcePath)))
     {
-      snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
-      if (isRecursive)
-      {
-        if (entry->d_type == DT_DIR)
-        {
-          browseDirectories(path, destinationPath, isRecursive);
-        }
-        else
-        {
-          copyFiles(path, destinationPath);
-        }
-      }
-      else
-      {
-        if (entry->d_type == DT_DIR)
-        {
-          syslog(LOG_NOTICE, "BROWSER: Skipping directory: %s", path);
-        }
-        else
-        {
-          copyFiles(path, destinationPath);
-        }
-      }
+        syslog(LOG_ERR, "BROWSE: Could not open directory");
+        return;
     }
-  }
-  closedir(dir);
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+        {
+            snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
+            if (entry->d_type == DT_DIR)
+            {
+                if (isRecursive)
+                {
+                    browseDirectories(path, destinationPath, isRecursive);
+                }
+            }
+            else
+            {
+                copyFiles(path, destinationPath);
+            }
+        }
+    }
+    closedir(dir);
 }
 
-void compareFiles(char* sourcePath, char* destinationPath) 
-{
-  syslog(LOG_NOTICE, "COMPARER: Comparing files: %s", sourcePath);
-  DIR* dir;
-  struct dirent* entry;
-  char path[1024];
-  if (!(dir = opendir(sourcePath)))
-  {
-    syslog(LOG_ERR, "COMPARER: Could not open directory");
-    return;
-  }
-  while ((entry = readdir(dir)) != NULL)
-  {
-    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
-    {
-      snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
-      if (entry->d_type == DT_DIR)
-      {
-        compareFiles(path, destinationPath);
-      }
-      else
-      {
-        if (entry->d_type == DT_REG)
-        {
-          syslog(LOG_NOTICE, "COMPARER: Comparing file: %s", path);
-          if (strcmp(path, destinationPath))
-          {
-            syslog(LOG_NOTICE, "COMPARER: Deleting file: %s", path);
-            remove(path);
-          }
-        }
-      }
-    }
-  }
-  closedir(dir);
-}
-//compare files in source and destination, if they are different, delete the file in destination, ignore directories
-void compareDirectories(char* sourcePath, char* destinationPath, int isRecursive)
-{
-  syslog(LOG_NOTICE, "COMPARER: Comparing directories: %s", sourcePath);
-  DIR* dir;
-  struct dirent* entry;
-  char path[1024];
-  if (!(dir = opendir(sourcePath)))
-  {
-    syslog(LOG_ERR, "COMPARER: Could not open directory");
-    return;
-  }
-  while ((entry = readdir(dir)) != NULL)
-  {
-    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
-    {
-      snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
-      if (isRecursive)
-      {
-        if (entry->d_type == DT_DIR)
-        {
-          compareDirectories(path, destinationPath, isRecursive);
-        }
-        else
-        {
-          compareFiles(path, destinationPath);
-        }
-      }
-      else
-      {
-        if (entry->d_type == DT_DIR)
-        {
-          syslog(LOG_NOTICE, "COMPARER: Skipping directory: %s", path);
-        }
-        else
-        {
-          compareFiles(path, destinationPath);
-        }
-      }
-    }
-  }
-  closedir(dir);
-}
+
 
 
 
