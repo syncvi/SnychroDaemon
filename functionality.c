@@ -78,49 +78,43 @@ void deleteAll(char *givenPath) // wiper
 }
 
 // create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
-void copyFiles(char *source, char *destination)
+void copyFiles(char *entry_path_source, char *entry_path_destination)
 {
-  DIR *dir;
-  struct dirent *entry;
-  char path[1024];
-  if (!(dir = opendir(source)))
+  syslog(LOG_NOTICE, "Kopiowanie dużego pliku:%s do %s poprzez funkcję sendfile", entry_path_source, entry_path_destination);
+  int source_fd;
+  int destination_fd;
+  struct stat stat_buf;
+  off_t offset = 0;
+  printf("%s\n", entry_path_source);
+  printf("%s\n", entry_path_destination);
+  source_fd = open(entry_path_source, O_RDONLY, S_IRWXU | S_IRWXG | S_IROTH);
+  if (source_fd == -1)
   {
-    syslog(LOG_ERR, "COPY: Could not open directory");
-    return;
+    perror("Source_fd error:");
+    exit(EXIT_FAILURE);
   }
-  while ((entry = readdir(dir)) != NULL)
+  fstat(source_fd, &stat_buf);
+  destination_fd = open(entry_path_destination, O_WRONLY | O_CREAT, stat_buf.st_mode);
+  if (destination_fd == -1)
   {
-    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
-    {
-      snprintf(path, 1024, "%s/%s", source, entry->d_name);
-      if (entry->d_type == DT_DIR)
-      {
-        copyFiles(path, destination);
-      }
-      else
-      {
-        int fd_src = open(path, O_RDONLY);
-        int fd_dst = open(destination, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
-        if (fd_src == -1 || fd_dst == -1)
-        {
-          syslog(LOG_ERR, "COPY: Could not open file");
-          return;
-        }
-        if (sendfile(fd_dst, fd_src, NULL, sizeGetter(path)) == -1)
-        {
-          syslog(LOG_ERR, "COPY: Could not copy file");
-          return;
-        }
-      }
-    }
+    perror("Destination_fd error:");
+    exit(EXIT_FAILURE);
   }
-  closedir(dir);
+  if (sendfile(destination_fd, source_fd, &offset, stat_buf.st_size) == -1)
+  {
+    perror("Sendfile error:");
+    exit(EXIT_FAILURE);
+  }
+
+  close(source_fd);
+  close(destination_fd);
 }
 void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive)
 {
-  DIR *dir;
-  struct dirent *entry;
+  DIR* dir;
+  struct dirent* entry;
   char path[1024];
+  char destination[1024];
   if (!(dir = opendir(sourcePath)))
   {
     syslog(LOG_ERR, "BROWSE: Could not open directory");
@@ -131,6 +125,7 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive)
     if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
     {
       snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
+      snprintf(destination, 1024, "%s/%s", destinationPath, entry->d_name);
       if (entry->d_type == DT_DIR)
       {
         if (isRecursive)
@@ -140,7 +135,7 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive)
       }
       else
       {
-        copyFiles(path, destinationPath);
+        copyFiles(path, destination);
       }
     }
   }

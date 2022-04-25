@@ -157,5 +157,8 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     /*----------------------------------------------------------------------------------------------------*/
-    return 0;
+    browseDirectories(source, destination, isRecursive);
+    syslog(LOG_NOTICE, "MAIN: Task has been finished.");
+    closelog();
+    exit(EXIT_SUCCESS);
 }
