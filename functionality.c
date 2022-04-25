@@ -19,7 +19,7 @@ time_t timeGetter(char *time)
     struct stat _time;
     if(stat(time, &_time) == -1)
     {
-        syslog(LOG_ERR, "Sth gone wrong with setting time!!!", time);
+        syslog(LOG_ERR, "Sth gone wrong with setting time!!! %s" , time);
     }
     return _time.st_mtime;
 }
@@ -78,7 +78,7 @@ void deleteAll(char* givenPath) //wiper
 
 void copyFiles(char* sourcePath, char* destinationPath)
 {
-  syslog(LOG_NOTICE, "COPIER: copying files using sendfile...", sourcePath, destinationPath);
+  syslog(LOG_NOTICE, "COPIER: copying files using sendfile...%s | %s", sourcePath, destinationPath);
   int sourceFolder;
   int destinationFolder;
   struct stat status;
