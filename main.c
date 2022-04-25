@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
     // if flag requires additional argument, like -s [filesize], thus, another switch will use choiceOption
     int choiceOption;
     int isRecursive = 0;
+    int time = 300;
+    int filesize = __INT_MAX__;
 
     char *source = argv[1];
     char *destination = argv[2];
@@ -95,7 +97,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    while ((choice = getopt(argc, argv, "Rd:")) != -1)
+    while ((choice = getopt(argc, argv, "R:T:S ")) != -1)
     {
         switch (choice)
         {
@@ -103,11 +105,24 @@ int main(int argc, char *argv[])
             isRecursive = 1;
             break;
         case 'T':
-            choiceOption = atoi(optarg);
+            time = atoi(optarg);
             break;
         case 'S':
-            choiceOption = atoi(optarg);
+            filesize = atoi(optarg);
             break;
+        case '?':
+            switch (optopt)
+            {
+            case 'T':
+                fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+                exit(EXIT_FAILURE);
+                break;
+            case 'S':
+                fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+                exit(EXIT_FAILURE);
+                break;
+            }
+            fprintf(stderr, "Unknown option `-%c'.\n", optopt);
         default:
             abort();
         }
