@@ -23,13 +23,7 @@ time_t timeGetter(char* time)
   }
   return _time.st_mtime;
 }
-off_t sizeGetter(char* size)
-{
-  struct stat _size;
-  if (stat(size, &_size) == 0)
-    return _size.st_size;
-  return -99;
-}
+
 void instruction_manual()
 {
   syslog(LOG_NOTICE, "Displaying manual page...");
@@ -47,29 +41,32 @@ void instruction_manual()
   fclose(fp);
 }
 
-void deleteAll(char* givenPath) // wiper
+//check if file already exists in destination
+int checkIfFileExists(char* sourcePath, char* destinationPath)
 {
-  DIR *dir;
-  struct dirent *entry;
-  char path[1024];
-  if (!(dir = opendir(givenPath)))
+  struct stat s_copy, d_copy;
+  if (stat((sourcePath), &s_copy) == -1)
   {
-    syslog(LOG_ERR, "WIPER: Could not open directory");
-    return;
+    perror("Stat file from copying function error:");
+    exit(EXIT_FAILURE);
   }
-  while ((entry = readdir(dir)) != NULL)
+  if (stat((destinationPath), &d_copy) == -1)
   {
-    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
-    {
-      snprintf(path, 1024, "%s/%s", givenPath, entry->d_name);
-      remove(path);
-    }
+    perror("Stat file from copying function error:");
+    exit(EXIT_FAILURE);
   }
-  closedir(dir);
+  if (s_copy.st_size == d_copy.st_size)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 // create a function that copies files from source to destination if files are different, if files are the same, do nothing, ignore directories inside, can be recursive
-void copyFiles(char *entry_path_source, char *entry_path_destination)
+void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 {
   syslog(LOG_NOTICE, "Kopiowanie dużego pliku:%s do %s poprzez funkcję sendfile", entry_path_source, entry_path_destination);
   int source_fd;
@@ -98,10 +95,54 @@ void copyFiles(char *entry_path_source, char *entry_path_destination)
   close(source_fd);
   close(destination_fd);
 }
-void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
+
+void copySmallFiles(char *entry_path_source, char *entry_path_destination)
+{
+  printf("Source %s\n", entry_path_source);
+  printf("Destination %s\n", entry_path_destination);
+  syslog(LOG_NOTICE, "Kopiowanie małego pliku:%s do %s poprzez read/write", entry_path_source, entry_path_destination);
+  int src_fd, dst_fd, n;
+  unsigned char buffer[4096];
+
+  src_fd = open(entry_path_source, O_RDONLY);
+  if (src_fd == -1)
+  {
+    perror("CANNOT OPEN THE SOURCE FILE");
+    exit(EXIT_FAILURE);
+  }
+
+  dst_fd = open(entry_path_destination, O_WRONLY | O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IROTH);
+  if (dst_fd == -1)
+  {
+    perror("CANNOT OPEN THE TARGET FILE");
+    exit(EXIT_FAILURE);
+  }
+
+  while ((n = read(src_fd, buffer, sizeof(buffer))) > 0)
+    write(dst_fd, buffer, n);
+
+  close(src_fd);
+  close(dst_fd);
+}
+
+void howToCopy(char* sourcePath, char* destinationPath, int size)
+{
+  struct stat f_copy;
+  if (stat((sourcePath), &f_copy) == -1)
+  {
+    perror("Stat file from copying function error:");
+    exit(EXIT_FAILURE);
+  }
+  if ((f_copy.st_size) >= size)
+    copyBigFiles(sourcePath, destinationPath);
+  else
+    copySmallFiles(sourcePath, destinationPath);
+}
+
+void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive, int size)
 {
   DIR* dir;
-  struct dirent* entry;
+  struct dirent *entry;
   char path[1024];
   char destination[1024];
   if (!(dir = opendir(sourcePath)))
@@ -119,12 +160,16 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
       {
         if (isRecursive)
         {
-          browseDirectories(path, destinationPath, isRecursive);
+          browseDirectories(path, destinationPath, isRecursive, size);
         }
+      }
+      else if (checkIfFileExists(path, destination))
+      {
+        syslog(LOG_NOTICE, "Plik %s już istnieje w %s", entry->d_name, destinationPath);
       }
       else
       {
-        copyFiles(path, destination);
+        howToCopy(path, destination, size);
       }
     }
   }

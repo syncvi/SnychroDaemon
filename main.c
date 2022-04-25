@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     }
 
     
-    while ((choice = getopt(argc, argv, "Rh:T:S ")) != -1)
+    while ((choice = getopt(argc, argv, "Rh:T:S:")) != -1)
     {
         switch (choice)
         {
@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
     }
     /*----------------------------------------------------------------------------------------------------*/
     bigSleeping(time);
-    browseDirectories(source, destination, isRecursive);
+    browseDirectories(source, destination, isRecursive, filesize);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
     closelog();
     exit(EXIT_SUCCESS);
