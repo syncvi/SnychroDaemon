@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
           exit(EXIT_FAILURE);
         }
 
-    while((choice=getopt(argc,argv,"Rh:")) != -1){ //ADD MORE CASES LATER -t, -c, -s, w/e
+    while((choice=getopt(argc,argv,"Rd:")) != -1){ //ADD MORE CASES LATER -t, -c, -s, w/e
         switch (choice){
             case 'R':
             isRecursive=1;
