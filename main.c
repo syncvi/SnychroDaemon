@@ -84,6 +84,7 @@ int main(int argc, char* argv[]){
           exit(EXIT_FAILURE);
         }
 
+<<<<<<< HEAD
     while((choice=getopt(argc,argv,"Rd:")) != -1){ //ADD MORE CASES LATER -t, -c, -s, w/e
         switch (choice){
             case 'R':
@@ -93,6 +94,29 @@ int main(int argc, char* argv[]){
 
             default:
             abort(); //or simply break, idk
+=======
+    if (strcmp(source, destination) == 0)
+    {
+        fprintf(stderr, "Source and destination directory are the same.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while ((choice = getopt(argc, argv, "Rd:")) != -1)
+    {
+        switch (choice)
+        {
+        case 'R':
+            isRecursive = 1;
+            break;
+        case 'T':
+            choiceOption = atoi(optarg);
+            break;
+        case 'S':
+            choiceOption = atoi(optarg);
+            break;
+        default:
+            abort(); // or simply break, idk
+>>>>>>> a5c8a9d0ee6538825af1ad972dde9258ad8ea407
         }
     }
 
