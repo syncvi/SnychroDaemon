@@ -14,7 +14,7 @@
 #include <fcntl.h>
 #include <syslog.h>
 #include <sys/sendfile.h>
-time_t timeGetter(char *time)
+time_t timeGetter(char* time)
 {
   struct stat _time;
   if (stat(time, &_time) == -1)
@@ -23,7 +23,7 @@ time_t timeGetter(char *time)
   }
   return _time.st_mtime;
 }
-off_t sizeGetter(char *size)
+off_t sizeGetter(char* size)
 {
   struct stat _size;
   if (stat(size, &_size) == 0)
@@ -46,7 +46,7 @@ void instruction_manual()
     putchar(ch);
   fclose(fp);
 }
-int appendSlash(char *entry_path, int path_len)
+int appendSlash(char* entry_path, int path_len)
 {
   if (entry_path[path_len - 1] != '/')
   {
@@ -56,7 +56,7 @@ int appendSlash(char *entry_path, int path_len)
   }
   return 0;
 }
-void deleteAll(char *givenPath) // wiper
+void deleteAll(char* givenPath) // wiper
 {
   DIR *dir;
   struct dirent *entry;
@@ -109,7 +109,7 @@ void copyFiles(char *entry_path_source, char *entry_path_destination)
   close(source_fd);
   close(destination_fd);
 }
-void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive)
+void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
 {
   DIR* dir;
   struct dirent* entry;
