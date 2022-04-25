@@ -10,3 +10,5 @@ Aby program działał poprawnie oba katalogi muszą istnieć, oraz ścieżki nie
     -S [rozmiar] – ustawienie rozmiaru, po którym demon ma sprawdzać, którą funkcję kopiującą ma użyć. Bez użycia tego parametru wszystkie pliki są kopiowane za pomocą niskopoziomowych funkcji read/write. Pliki wyższej niż parametr rozmiar będą kopiowane za pomocą dedykowanego wywołania sendfile.
     -h – wyświetlenie tej instrukcji
 
+ps aux - wyświetla wszystkie procesy
+kill -s SIGUSR1 pid, gdzie pid to id procesu

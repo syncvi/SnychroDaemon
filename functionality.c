@@ -76,8 +76,6 @@ void copyFiles(char *entry_path_source, char *entry_path_destination)
   int destination_fd;
   struct stat stat_buf;
   off_t offset = 0;
-  printf("%s\n", entry_path_source);
-  printf("%s\n", entry_path_destination);
   source_fd = open(entry_path_source, O_RDONLY, S_IRWXU | S_IRWXG | S_IROTH);
   if (source_fd == -1)
   {
@@ -131,4 +129,5 @@ void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive)
     }
   }
   closedir(dir);
+  printf("Copying files done\n");
 }
