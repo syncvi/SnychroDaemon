@@ -4,4 +4,5 @@
 /*--------------FUNCTIONS GO THERE--------------*/
 void instruction_manual();
 void deleteAll(char* givenPath);
+time_h timeGetter(char *time);
 #endif

@@ -246,3 +246,17 @@ void compareFiles(char* sourcePath, char* destinationPath)
 
 
 
+<<<<<<< HEAD
+}
+time_t timeGetter(char *time)
+{
+    struct stat _time;
+    if(stat(time, &_time) == -1)
+    {
+        syslog(LOG_ERR, "Sth gone wrong with setting time!!!", time);
+    }
+    return _time.st_mtime;
+
+}
+=======
+>>>>>>> aa4d041da32fff27dc74681d5a02a0ae0031b3f3
