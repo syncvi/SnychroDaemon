@@ -6,10 +6,10 @@
 #include <getopt.h>
 #include <time.h>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/stat.h> 
 #include <string.h>
 volatile int flag = 0;
-
+int siema=3;
 void handler(int signum){
     if (signum == SIGUSR1)
     {
