@@ -46,16 +46,7 @@ void instruction_manual()
     putchar(ch);
   fclose(fp);
 }
-int appendSlash(char* entry_path, int path_len)
-{
-  if (entry_path[path_len - 1] != '/')
-  {
-    entry_path[path_len] = '/';
-    entry_path[path_len + 1] = '\0';
-    return 1;
-  }
-  return 0;
-}
+
 void deleteAll(char* givenPath) // wiper
 {
   DIR *dir;
