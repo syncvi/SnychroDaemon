@@ -1,16 +1,7 @@
-#include "funnies.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <syslog.h>
-#include <signal.h>
-#include <getopt.h>
-#include <time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
-void instruction_manual()
+
+int main()
 {
-    syslog(LOG_NOTICE, "Displaying manual page...");
     char *filename = "manual.txt";
     FILE *fp = fopen(filename, "r");
 
@@ -25,12 +16,9 @@ void instruction_manual()
     char ch;
     while ((ch = fgetc(fp)) != EOF)
         putchar(ch);
-
+    printf("\n");
     // close the file
     fclose(fp);
-}
-void deleteAll(char* givenPath)
-{
-    syslog(LOG_NOTICE, "Erasing  everything from: %s...\n ", givenPath);
 
+    return 0;
 }
