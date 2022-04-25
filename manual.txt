@@ -1,18 +1,18 @@
 1. Parametry wymagane:
-    -s [sciezka_zrodlowa] - podanie dla demona ściezki katalogu z którego kopiujemy
-    -d [sciezka_docelowa] - podanie dla demona ściezki katalogu do którego kopiujemy 
+    [sciezka_zrodlowa] – podanie dla demona ściezki katalogu z którego kopiujemy
+    [sciezka_docelowa] – podanie dla demona ściezki katalogu do którego kopiujemy 
 Aby program działał poprawnie oba katalogi muszą istnieć, oraz ścieżki nie mogą być takie same
 2. Parametry opcjonalne:
-    -R - pozwala na rekurencyjne sprawdzenie katalogów.
-    -T - [czas w sekundach] – ustawienie czasu, po którym demon na zacząć synchronizację,
-    -S - [rozmiar] – ustawienie rozmiaru, po którym demon ma sprawdzać, którą funkcję 
+    -R – pozwala na rekurencyjne sprawdzenie katalogów.
+    -T [czas w sekundach] – ustawienie czasu, po którym demon na zacząć synchronizację,
+    -S [rozmiar] – ustawienie rozmiaru, po którym demon ma sprawdzać, którą funkcję 
    kopiującą ma użyć. Bez użycia tego parametru wszystkie pliki są kopiowane za pomocą niskopoziomowych funkcji read/write. Pliki wyższej niż parametr rozmiar będą kopiowane za pomocą dedykowanego wywołania sendfile.
-    -h - wyświetlenie tej instrukcji
+    -h – wyświetlenie tej instrukcji
 Przykładowe uruchomienia:
-./projekt -s /home/folder1/zrodlo -d /home/foo/23/docelowy -R -T 20 -S 800
+./projekt /home/folder1/zrodlo /home/foo/23/docelowy -R -T 20 -S 800
     #Kopiuje katalog "/home/folder1/zrodlo" do katalogu "/home/foo/23/docelowy" rekurencyjnie, po czasie 20 sekund
     wszystkie pliki większe niż 800
-./projekt -d /home/ffo -s /home/folder1/f12345  -S 20
+./projekt /home/ffo /home/folder1/f12345 -S 20
     #Kopiuje katalog "home/ffo" do katalogu "/home/folder1/f12345" po czasie 20 sekund
 ./projekt -h
-    #Wyświetla pomoc fajną
+    #Wyświetla pomoc 
