@@ -85,12 +85,12 @@ int main(int argc, char* argv[])
         case '?':
             switch (optopt)
             {
-            case 'T':
+            case 't':
                 syslog(LOG_ERR, "MAIN: Time option is invalid!");
                 fprintf(stderr, "Option -%c requires an argument.\n", optopt);
                 exit(EXIT_FAILURE);
                 break;
-            case 'S':
+            case 's':
                 syslog(LOG_ERR, "MAIN: Filesize option is invalid!");
                 fprintf(stderr, "Option -%c requires an argument.\n", optopt);
                 exit(EXIT_FAILURE);
