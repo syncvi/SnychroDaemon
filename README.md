@@ -8,8 +8,11 @@
 1. Parameters: source path, destination path
 2. Options :
       -R - browsing directories recursively, also it doesn't ignore directories inside directories anymore.
+      
       -t - set time, daemon will start synchronizing directories after 5 minutes (300s) by default.
+      
       -s - set file size, depending on given size, different functionality will be triggered.
+      
       -h - displaying manual.
       
 # Useful bash commands:
