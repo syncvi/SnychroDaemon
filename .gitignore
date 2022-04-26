@@ -5,3 +5,4 @@
 main.o
 functionality.o
 syndi
+.vscode/settings.json

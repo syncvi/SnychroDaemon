@@ -12,3 +12,5 @@ Aby program działał poprawnie oba katalogi muszą istnieć, oraz ścieżki nie
 
 ps aux - wyświetla wszystkie procesy
 kill -s SIGUSR1 pid, gdzie pid to id procesu
+
+

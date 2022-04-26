@@ -18,15 +18,6 @@
 #include <sys/sendfile.h>
 #include <utime.h>
 
-time_t timeGetter(char *time)
-{
-  struct stat _time;
-  if (stat(time, &_time) == -1)
-  {
-    syslog(LOG_ERR, "TIME: Error while setting time. %s", time);
-  }
-  return _time.st_mtime;
-}
 
 void instruction_manual()
 {
@@ -68,15 +59,14 @@ bool isModified(char *path1, char *path2)
 // set modification date of destination file to source file
 void setModified(char *source, char *destination)
 {
-  struct stat _time;
-  if (stat(source, &_time) == -1)
+  struct stat source_time;
+  if (stat(source, &source_time) == -1)
   {
     syslog(LOG_ERR, "SETMODIFIED: Error while checking time. %s", source);
   }
-  struct utimbuf _time_buf;
-  _time_buf.actime = _time.st_atime;
-  _time_buf.modtime = _time.st_mtime;
-  if (utime(destination, &_time_buf) == -1)
+  struct utimbuf destination_time;
+  destination_time.modtime = source_time.st_mtime;
+  if (utime(destination, &destination_time) == -1)
   {
     syslog(LOG_ERR, "SETMODIFIED: Error while setting time. %s", destination);
   }
@@ -90,7 +80,6 @@ int checkIfFileExists(char *sourcePath, char *destinationPath)
   {
     syslog(LOG_ERR, "CHECK: Error while checking if source file exists: %s", sourcePath);
     printf("Error: could not open file %s", sourcePath);
-    exit(EXIT_FAILURE);
   }
   stat((destinationPath), &d_copy);
   if (s_copy.st_size == d_copy.st_size)
@@ -126,6 +115,38 @@ int checkIfDirectoryExists(char *path)
   }
 }
 
+//remove directory and all directories and files within it
+void removeDirectory(char *path)
+{
+  DIR *dir;
+  struct dirent *entry;
+  char pathname[PATH_MAX];
+  if (!(dir = opendir(path)))
+  {
+    syslog(LOG_ERR, "REMOVE: Error while opening directory: %s", path);
+    printf("Error: could not open directory %s", path);
+    return;
+  }
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+    {
+      snprintf(pathname, (size_t)PATH_MAX, "%s/%s", path, entry->d_name);
+      removeDirectory(pathname);
+      if (entry->d_type == DT_REG)
+      {
+        if (remove(pathname) == -1)
+        {
+          syslog(LOG_ERR, "REMOVE: Error while removing file: %s", pathname);
+          printf("Error: could not remove file %s", pathname);
+        }
+      }
+
+    }
+  }
+  closedir(dir);
+  rmdir(path);
+}
 // Function that copies files from source to destination using sendfile
 /*void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 {
@@ -273,7 +294,7 @@ void howToCopy(char *sourcePath, char *destinationPath, int size)
     copySmallFiles(sourcePath, destinationPath);
 }
 // Browse source and destination directory. If there is file in source which does not exist in destination, remove it.
-void browseSourceAndDestination(char *sourcePath, char *destinationPath)
+void browseSourceAndDestination(char *sourcePath, char *destinationPath, int isRecursive)
 {
   DIR *dir;
   struct dirent *entry;
@@ -301,9 +322,9 @@ void browseSourceAndDestination(char *sourcePath, char *destinationPath)
       }
       if (entry->d_type == DT_DIR)
       {
-        if (checkIfDirectoryExists(destination) == 0 && checkIfDirectoryExists(path) == 1)
+        if (checkIfDirectoryExists(destination) == 0 && checkIfDirectoryExists(path) == 1 && isRecursive == 1)
         {
-          rmdir(path);
+          remove(path);
           syslog(LOG_NOTICE, "BROWSE: Directory %s was removed", path);
         }
       }
@@ -323,12 +344,10 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
     syslog(LOG_ERR, "BROWSE: Could not open directory");
     return;
   }
-  if (isRecursive)
-  {
-    snprintf(path, 1024, "%s", sourcePath);
-    snprintf(destination, 1024, "%s", destinationPath);
-    browseSourceAndDestination(destination, path);
-  }
+
+  snprintf(path, 1024, "%s", sourcePath);
+  snprintf(destination, 1024, "%s", destinationPath);
+  browseSourceAndDestination(destination, path, isRecursive);
 
   while ((entry = readdir(dir)) != NULL)
   {

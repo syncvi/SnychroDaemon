@@ -107,28 +107,6 @@ int main(int argc, char* argv[])
             abort();
         }
     }
-    /*------------------------------------Directories check------------------------------------*/
-    bigSleeping(time);
-    if (stat(source, &status1) == 0 && !S_ISDIR(status1.st_mode))
-    {
-        syslog(LOG_ERR, "MAIN: First argument is not a folder or doesn't exist!");
-        fprintf(stderr, "First argument is not a folder or doesn't exist!\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (stat(destination, &status2) == 0 && !S_ISDIR(status2.st_mode))
-    {
-        syslog(LOG_ERR, "MAIN: Second argument is not a folder or doesn't exist!!");
-        fprintf(stderr, "Second argument is not a folder or doesn't exist!!\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (strcmp(source, destination) == 0)
-    {
-        syslog(LOG_ERR, "MAIN: Source and destination are the same!");
-        fprintf(stderr, "Source and destination directory are the same.\n");
-        exit(EXIT_FAILURE);
-    }
     /*------------------------------------Creating a Daemon------------------------------------*/
     pid_t pid, sid;
 
@@ -157,10 +135,31 @@ int main(int argc, char* argv[])
         syslog(LOG_ERR, "MAIN: chdir has failed.");
         exit(EXIT_FAILURE);
     }
+    /*------------------------------------Directories check------------------------------------*/
+    bigSleeping(time);
+    if (stat(source, &status1) == 0 && !S_ISDIR(status1.st_mode))
+    {
+        syslog(LOG_ERR, "MAIN: First argument is not a folder or doesn't exist!");
+        fprintf(stderr, "First argument is not a folder or doesn't exist!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (stat(destination, &status2) == 0 && !S_ISDIR(status2.st_mode))
+    {
+        syslog(LOG_ERR, "MAIN: Second argument is not a folder or doesn't exist!!");
+        fprintf(stderr, "Second argument is not a folder or doesn't exist!!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (strcmp(source, destination) == 0)
+    {
+        syslog(LOG_ERR, "MAIN: Source and destination are the same!");
+        fprintf(stderr, "Source and destination directory are the same.\n");
+        exit(EXIT_FAILURE);
+    }
     /*------------------------------------Copying Files------------------------------------*/
     browseDirectories(source, destination, isRecursive, filesize);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
-    printf("Synchronising directories has finished succesfully\n");
     closelog();
     exit(EXIT_SUCCESS);
 }

@@ -1,3 +1,4 @@
+.SILENT:
 output: main.o functionality.o 
 	gcc main.o functionality.o -o syndi
 
