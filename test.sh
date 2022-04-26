@@ -5,8 +5,8 @@ make clean
 make 
 rm -rf syslog.txt
 #sudo truncate -s 0 /var/log/syslog
-echo "Test 1 - Simplest copying of files from FolderA to FolderB"
-echo "Copying will be nonrecursive, be concluded instantly (for ease of testing) and use 32MB as maximum file size for small function"
+echo "Test 1 - Simplest copying of files from FolderA to FolderB."
+echo "Copying will be nonrecursive, be concluded instantly (for ease of testing) and use 32MB as maximum file size for small function."
 
 rm -rf FolderA
 mkdir FolderA
@@ -20,15 +20,15 @@ mkdir FolderB
 sleep 1s
 ./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -t 0 -s 32000000
 sleep 1s
-echo "Copying done listing of FolderA"
+echo "Copying done; listing FolderA..."
 ls $SCRIPTPATH/FolderA
-echo "Copying done listing of FolderB"
+echo "Copying done; listing FolderB..."
 ls $SCRIPTPATH/FolderB   
 echo "Test 1 - Finished"
 echo " "
 
-echo "Test 2 - Copying of files from FolderA to FolderB with recursive option"
-echo "Copying will be recursive, be concluded instantly (for ease of testing) and use 32MB as maximum file size for small function"
+echo "Test 2 - Copying files from FolderA to FolderB with recursive option."
+echo "Copying will be recursive, be concluded instantly (for ease of testing) and use 32MB as maximum file size for small function."
 rm -rf FolderA
 mkdir FolderA
 dd if=/dev/zero of=FolderA/plik16MB.txt count=16 bs=1MB status=none
@@ -41,19 +41,19 @@ mkdir FolderB
 sleep 1s
 ./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -R -t 0 -s 32000000
 sleep 1s
-echo "Copying done listing of FolderA"
+echo "Copying done; listing FolderA..."
 ls FolderA
-echo "Copying done listing of FolderA/SubFolderA"
+echo "Copying done; listing FolderA/SubFolderA..."
 ls FolderA/SubFolderA
-echo "Copying done listing of FolderB"
+echo "Copying done; listing FolderB..."
 ls FolderB
-echo "Copying done listing of FolderB/SubFolderA"
+echo "Copying done; listing FolderB/SubFolderA..."
 ls FolderB/SubFolderA
 echo "Test 2 - Finished"
 echo " "
 
-echo "Test 3 - Copying of files from FolderA to FolderB with files in FolderB that do not exist in FolderA"
-echo "Copying will be nonrecursive, be concluded instantly (for ease of testing) and use 32MB as maximum file size for small function"
+echo "Test 3 - Copying files from FolderA to FolderB with files in FolderB that do not exist in FolderA."
+echo "Copying will be nonrecursive, be concluded instantly (for ease of testing) and use 32MB as maximum file size for small function."
 rm -rf FolderA
 mkdir FolderA
 dd if=/dev/zero of=FolderA/plik16MB.txt count=16 bs=1MB status=none
@@ -65,27 +65,27 @@ mkdir FolderB
 mkdir FolderB/SubFolderB
 dd if=/dev/zero of=FolderB/plik8MB.txt count=8 bs=1MB status=none
 dd if=/dev/zero of=FolderB/SubFolderB/plik8MB.txt count=8 bs=1MB status=none
-echo "Listing of FolderA before copying"
+echo "Listing FolderA before copying..."
 ls FolderA
-echo "Listing of FolderB before copying"
+echo "Listing FolderB before copying..."
 ls FolderB
 echo " "
 
 sleep 1s
 ./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -t 0 -s 32000000
 sleep 1s
-echo "Copying done listing of FolderA"
+echo "Copying done; listing FolderA..."
 ls FolderA
-echo "Copying done listing of FolderA/SubFolderA"
+echo "Copying done; listing FolderA/SubFolderA..."
 ls FolderA/SubFolderA
-echo "Copying done listing of FolderB"
+echo "Copying done; listing FolderB..."
 ls FolderB
 echo "Test 3 - Finished"
 echo " "
 
-echo "Test 4 - Copying files from FolderA to FolderB with folder FolderB containing SubFolderC with files, that do not exist in FolderA"
-echo "Copying will be recursive, be concluded with default time and use 32MB as maximum file size for small function"
-echo "This test will take a long time to finish, so SIGUSR1 will be sent to the process after 5 seconds"
+echo "Test 4 - Copying files from FolderA to FolderB with folder FolderB containing SubFolderC with files, that do not exist in FolderA."
+echo "Copying will be recursive, be concluded with default time and use 32MB as maximum file size for small function".
+echo "This test will take a long time to finish, so SIGUSR1 will be sent to the process after 5 seconds..."
 rm -rf FolderA
 mkdir FolderA
 dd if=/dev/zero of=FolderA/plik16MB.txt count=16 bs=1MB status=none
@@ -105,13 +105,13 @@ sleep 5s
 pidprogramu="$(pidof ./syndi)"
 kill -s SIGUSR1 $pidprogramu
 sleep 1s
-echo "Copying done listing of FolderA"
+echo "Copying done; listing FolderA..."
 ls FolderA
-echo "Copying done listing of FolderA/SubFolderA"
+echo "Copying done; listing FolderA/SubFolderA..."
 ls FolderA/SubFolderA
-echo "Copying done listing of FolderB"
+echo "Copying done; listing FolderB..."
 ls FolderB
-echo "Copying done listing of FolderB/SubFolderA"
+echo "Copying done; listing FolderB/SubFolderA..."
 ls FolderB/SubFolderA
 echo "Test 4 - Finished"
 echo " "
