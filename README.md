@@ -20,4 +20,4 @@
 
 ps aux - displaying all processes
 
-kill -s SIGUSR1 [pid] where pid is an id of you daemon process (remove square brackets).
+kill -s SIGUSR1 [pid] where pid is an id of your daemon process (remove square brackets).
