@@ -78,7 +78,7 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
   if (stat((sourcePath), &s_copy) == -1)
   {
     syslog(LOG_ERR, "CHECK_FILE: Error while checking if source file exists: %s", sourcePath);
-    printf("Error: could not open file %s", sourcePath);
+    printf("Error: could not open file: %s", sourcePath);
   }
   stat((destinationPath), &d_copy);
   if (s_copy.st_size == d_copy.st_size)
@@ -123,7 +123,7 @@ void removeDirectory(char* path)
   if (!(dir = opendir(path)))
   {
     syslog(LOG_ERR, "REMOVE_DIR: Error while opening directory: %s", path);
-    printf("Error: could not open directory %s", path);
+    printf("Error: could not open directory: %s", path);
     return;
   }
   while ((entry = readdir(dir)) != NULL)
@@ -138,7 +138,7 @@ void removeDirectory(char* path)
         if (remove(pathname) == -1)
         {
           syslog(LOG_ERR, "REMOVE_DIR: Error while removing file: %s", pathname);
-          printf("Error: could not remove file %s", pathname);
+          printf("Error: could not remove file: %s", pathname);
         }
       }
 
@@ -151,7 +151,7 @@ void removeDirectory(char* path)
 // Copying big files from source to destination using mapping
 void copyBigFiles(char* sourcePath, char* destinationPath)
 {
-  syslog(LOG_NOTICE, "COPY_BIG: Copying big files from %s to %s", sourcePath, destinationPath);
+  syslog(LOG_NOTICE, "COPY_BIG: Copying files from: %s to: %s", sourcePath, destinationPath);
   int sourceFolder;
   int destinationFolder;
   struct stat statusBuffer;
@@ -205,7 +205,7 @@ void copyBigFiles(char* sourcePath, char* destinationPath)
 // Function copying files smaller than gives size if parameter -T was used
 void copySmallFiles(char* sourcePath, char* destinationPath)
 {
-  syslog(LOG_NOTICE, "COPY_SMALL: Copying small files from %s to %s", sourcePath, destinationPath);
+  syslog(LOG_NOTICE, "COPY_SMALL: Copying files from %s to %s", sourcePath, destinationPath);
   int sourceFolder, destinationFolder, reader;
   unsigned char buffer[4096];
 
