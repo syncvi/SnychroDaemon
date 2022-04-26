@@ -83,20 +83,16 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
   stat((destinationPath), &d_copy);
   if (s_copy.st_size == d_copy.st_size)
   {
-    if (isModified(sourcePath, destinationPath))
-    {
-      return 1;
-    }
+    if (isModified(sourcePath, destinationPath)) return 1;
+
     else
     {
       setModified(sourcePath, destinationPath);
       return 1;
     }
   }
-  else
-  {
-    return 0;
-  }
+
+  else return 0;
 }
 
 // check if destination directory exists
@@ -104,14 +100,9 @@ int checkIfDirectoryExists(char* path)
 {
   struct stat s_copy;
   stat(path, &s_copy);
-  if (S_ISDIR(s_copy.st_mode))
-  {
-    return 1;
-  }
-  else
-  {
-    return 0;
-  }
+
+  if (S_ISDIR(s_copy.st_mode)) return 1;
+  else return 0;
 }
 
 //remove directory and all directories and files within it
