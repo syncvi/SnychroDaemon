@@ -110,11 +110,12 @@ kill -s SIGUSR1 $pidprogramu
 sleep 1s
 echo "Copying done listing of FolderA"
 ls FolderA
+echo "Copying done listing of FolderA/SubFolderA"
 ls FolderA/SubFolderA
 echo "Copying done listing of FolderB"
 ls FolderB
-ls FolderB/SubFolderB
-ls FolderB/SubFolderB/SubFolderC
+echo "Copying done listing of FolderB/SubFolderA"
+ls FolderB/SubFolderA
 echo "Test 4 - Finished"
 echo " "
 

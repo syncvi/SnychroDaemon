@@ -132,7 +132,8 @@ void removeDirectory(char *path)
     if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
     {
       snprintf(pathname, (size_t)PATH_MAX, "%s/%s", path, entry->d_name);
-      removeDirectory(pathname);
+      if (entry->d_type == DT_DIR)
+        removeDirectory(pathname);
       if (entry->d_type == DT_REG)
       {
         if (remove(pathname) == -1)
@@ -317,15 +318,15 @@ void browseSourceAndDestination(char *sourcePath, char *destinationPath, int isR
         if (checkIfFileExists(path, destination) == 0)
         {
           remove(path);
-          syslog(LOG_NOTICE, "BROWSE: File %s was removed", path);
+          syslog(LOG_NOTICE, "BROWSE: File %s was removed since %s file doesn't exist", path, destination);
         }
       }
       if (entry->d_type == DT_DIR)
       {
         if (checkIfDirectoryExists(destination) == 0 && checkIfDirectoryExists(path) == 1 && isRecursive == 1)
         {
-          remove(path);
-          syslog(LOG_NOTICE, "BROWSE: Directory %s was removed", path);
+          removeDirectory(path);
+          syslog(LOG_NOTICE, "BROWSE: Directory %s was removed since %s directory doesn't exist ", path,destination);
         }
       }
     }
