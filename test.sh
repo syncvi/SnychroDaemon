@@ -3,7 +3,8 @@
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 make clean 
 make 
-
+rm -rf syslog.txt
+#sudo truncate -s 0 /var/log/syslog
 echo "Test 1 - Simplest copying of files from FolderA to FolderB"
 echo "Copying will be nonrecursive, be concluded instantly (for ease of testing) and use 32MB as maximum file size for small function"
 
@@ -117,9 +118,12 @@ echo " "
 
 
 echo " "
-echo "Opening syslog"
-cat /var/log/syslog | grep "DEMON">> $SCRIPTPATH/syslog.txt
-echo "Closing syslog"
+echo "Opening syslog..."
+sleep 1s
+echo "Writing to local file: syslog.txt..."
+sleep 1s
+sed -n "/^$(date --date='1 minutes ago' '+%b %_d %H:%M')/,\$p" /var/log/syslog | grep "DEMON" >> $SCRIPTPATH/syslog.txt
+echo "Closing syslog..."
 echo " "
 rm -rf FolderA
 rm -rf FolderB

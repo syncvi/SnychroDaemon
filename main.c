@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <string.h>
 volatile int flag = 0;
-
+//TODO: formating and shit
 void handler(int signum)
 {
     if (signum == SIGUSR1)
@@ -19,20 +19,17 @@ void handler(int signum)
         flag = 1;
     }
 }
-
 void bigSleeping(int time)
 {
     int i = 0;
     while (i < time)
     {
-        if (flag == 1)
-            return;
-
+        if (flag == 1) return;
+            
         sleep(1);
         i++;
     }
 }
-
 int main(int argc, char* argv[])
 {
     /*------------------------------------Required inputs check------------------------------------*/
@@ -152,11 +149,13 @@ int main(int argc, char* argv[])
     if (strcmp(source, destination) == 0)
     {
         syslog(LOG_ERR, "MAIN: Source and destination are the same!");
-        fprintf(stderr, "Source and destination directory are the same.\n");
+        fprintf(stderr, "Source and destination directory are the same!\n");
         exit(EXIT_FAILURE);
     }
     /*------------------------------------Copying Files------------------------------------*/
     browseDirectories(source, destination, isRecursive, filesize);
+    syslog(LOG_NOTICE, "MAIN: Wrapping things up...");
+    sleep(1);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
     closelog();
     exit(EXIT_SUCCESS);

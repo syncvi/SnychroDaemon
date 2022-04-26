@@ -43,11 +43,11 @@ bool isModified(char* path1, char* path2)
   struct stat _time2;
   if (stat(path1, &_time1) == -1)
   {
-    syslog(LOG_ERR, "IS_MODIFIED: Error while checking time. %s", path1);
+    syslog(LOG_ERR, "IS_MODIFIED: Error while checking time in: %s", path1);
   }
   if (stat(path2, &_time2) == -1)
   {
-    syslog(LOG_ERR, "IS_MODIFIED: Error while checking time. %s", path2);
+    syslog(LOG_ERR, "IS_MODIFIED: Error while checking time in: %s", path2);
   }
   if (_time1.st_mtime == _time2.st_mtime)
   {
@@ -55,20 +55,19 @@ bool isModified(char* path1, char* path2)
   }
   return 0;
 }
-
 // set modification date of destination file to source file
 void setModified(char* source, char* destination)
 {
   struct stat source_time;
   if (stat(source, &source_time) == -1)
   {
-    syslog(LOG_ERR, "SET_MODIFIED: Error while checking time. %s", source);
+    syslog(LOG_ERR, "SET_MODIFIED: Error while checking time in: %s", source);
   }
   struct utimbuf destination_time;
   destination_time.modtime = source_time.st_mtime;
   if (utime(destination, &destination_time) == -1)
   {
-    syslog(LOG_ERR, "SET_MODIFIED: Error while setting time. %s", destination);
+    syslog(LOG_ERR, "SET_MODIFIED: Error while setting time in: %s", destination);
   }
 }
 
@@ -118,8 +117,8 @@ int checkIfDirectoryExists(char* path)
 //remove directory and all directories and files within it
 void removeDirectory(char* path)
 {
-  DIR *dir;
-  struct dirent *entry;
+  DIR* dir;
+  struct dirent* entry;
   char pathname[PATH_MAX];
   if (!(dir = opendir(path)))
   {
