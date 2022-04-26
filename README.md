@@ -17,5 +17,7 @@
       -h - displaying manual.
       
 # Useful bash commands:
+
 ps aux - displaying all processes
+
 kill -s SIGUSR1 [pid] where pid is an id of you daemon process (remove square brackets).
