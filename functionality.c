@@ -45,14 +45,6 @@ void instruction_manual()
   fclose(fp);
 }
 
-// Function that deletes given file
-void deleteFile(char *path)
-{
-  if (remove(path) == -1)
-  {
-    syslog(LOG_ERR, "DELETE: Error while deleting file: %s", path);
-  }
-}
 
 // Check if modification date of two files are equal
 bool isModified(char *path1, char *path2)
@@ -282,6 +274,36 @@ void howToCopy(char *sourcePath, char *destinationPath, int size)
   else
     copySmallFiles(sourcePath, destinationPath);
 }
+//Browse source and destination directory. If there is file in source which does not exist in destination, remove it.
+void browseSourceAndDestination(char *sourcePath, char *destinationPath)
+{
+  DIR *dir;
+  struct dirent *entry;
+  char path[1024];
+  char destination[1024];
+  if (!(dir = opendir(sourcePath)))
+  {
+    syslog(LOG_ERR, "BROWSE: Could not open directory");
+    perror("Error opening directory");
+    return;
+  }
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
+    {
+      snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
+      snprintf(destination, 1024, "%s/%s", destinationPath, entry->d_name);
+      if (entry->d_type != DT_DIR)
+      {
+        if(checkIfFileExists(path, destination) == 0)
+        {
+          remove(path);
+        }
+      }
+    }
+  }
+}
+
 
 // Main function browsing given directory and copying files to destination
 void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive, int size)
@@ -327,6 +349,9 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
       }
     }
   }
-  
+  snprintf(path, 1024, "%s", sourcePath);
+  snprintf(destination, 1024, "%s", destinationPath);
+  browseSourceAndDestination(destination, path);
+
   closedir(dir);
 }
