@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
     /*------------------------------------Copying Files------------------------------------*/
     browseDirectories(source, destination, isRecursive, filesize);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
-    printf("Copying files done\n");
+    printf("Synchronising directories has finished succesfully\n");
     closelog();
     exit(EXIT_SUCCESS);
 }

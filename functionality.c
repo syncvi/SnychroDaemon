@@ -45,7 +45,6 @@ void instruction_manual()
   fclose(fp);
 }
 
-
 // Check if modification date of two files are equal
 bool isModified(char *path1, char *path2)
 {
@@ -96,7 +95,7 @@ int checkIfFileExists(char *sourcePath, char *destinationPath)
   stat((destinationPath), &d_copy);
   if (s_copy.st_size == d_copy.st_size)
   {
-    if(isModified(sourcePath, destinationPath))
+    if (isModified(sourcePath, destinationPath))
     {
       return 1;
     }
@@ -127,7 +126,7 @@ int checkIfDirectoryExists(char *path)
   }
 }
 
-//Function that copies files from source to destination using sendfile
+// Function that copies files from source to destination using sendfile
 /*void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 {
   syslog(LOG_NOTICE, "COPY: Copying big files from %s to %s", entry_path_source, entry_path_destination);
@@ -161,7 +160,7 @@ int checkIfDirectoryExists(char *path)
   close(destination_fd);
 }*/
 
-//Copying big files from source to destination using mapping
+// Copying big files from source to destination using mapping
 void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 {
   syslog(LOG_NOTICE, "COPY: Copying big files from %s to %s", entry_path_source, entry_path_destination);
@@ -176,14 +175,14 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
     perror("Source_fd error:");
     exit(EXIT_FAILURE);
   }
-  if(fstat(source_fd, &stat_buf))
+  if (fstat(source_fd, &stat_buf))
   {
     syslog(LOG_ERR, "COPY: Error getting file size of %s while copying big files", entry_path_source);
     perror("Fstat error:");
     exit(EXIT_FAILURE);
   }
   destination_fd = open(entry_path_destination, O_RDWR | O_CREAT | O_TRUNC, 0644);
-  if(ftruncate(destination_fd, stat_buf.st_size))
+  if (ftruncate(destination_fd, stat_buf.st_size))
   {
     syslog(LOG_ERR, "COPY: Error truncating file %s while copying big files", entry_path_destination);
     perror("Ftruncate error:");
@@ -215,7 +214,6 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
   close(source_fd);
   close(destination_fd);
 }
-
 
 // Function copying files smaller than gives size if parameter -T was used
 void copySmallFiles(char *entry_path_source, char *entry_path_destination)
@@ -274,7 +272,7 @@ void howToCopy(char *sourcePath, char *destinationPath, int size)
   else
     copySmallFiles(sourcePath, destinationPath);
 }
-//Browse source and destination directory. If there is file in source which does not exist in destination, remove it.
+// Browse source and destination directory. If there is file in source which does not exist in destination, remove it.
 void browseSourceAndDestination(char *sourcePath, char *destinationPath)
 {
   DIR *dir;
@@ -293,17 +291,25 @@ void browseSourceAndDestination(char *sourcePath, char *destinationPath)
     {
       snprintf(path, 1024, "%s/%s", sourcePath, entry->d_name);
       snprintf(destination, 1024, "%s/%s", destinationPath, entry->d_name);
-      if (entry->d_type != DT_DIR)
+      if (entry->d_type == DT_REG)
       {
-        if(checkIfFileExists(path, destination) == 0)
+        if (checkIfFileExists(path, destination) == 0)
         {
           remove(path);
+          syslog(LOG_NOTICE, "BROWSE: File %s was removed", path);
+        }
+      }
+      if (entry->d_type == DT_DIR)
+      {
+        if (checkIfDirectoryExists(destination) == 0 && checkIfDirectoryExists(path) == 1)
+        {
+          rmdir(path);
+          syslog(LOG_NOTICE, "BROWSE: Directory %s was removed", path);
         }
       }
     }
   }
 }
-
 
 // Main function browsing given directory and copying files to destination
 void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive, int size)
@@ -317,6 +323,13 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
     syslog(LOG_ERR, "BROWSE: Could not open directory");
     return;
   }
+  if (isRecursive)
+  {
+    snprintf(path, 1024, "%s", sourcePath);
+    snprintf(destination, 1024, "%s", destinationPath);
+    browseSourceAndDestination(destination, path);
+  }
+
   while ((entry = readdir(dir)) != NULL)
   {
     if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
@@ -349,9 +362,5 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
       }
     }
   }
-  snprintf(path, 1024, "%s", sourcePath);
-  snprintf(destination, 1024, "%s", destinationPath);
-  browseSourceAndDestination(destination, path);
-
   closedir(dir);
 }
