@@ -1,44 +1,26 @@
-Apr 26 09:22:02 kali PROJECT: DEMON[310459]: MAIN: Task has been started.
-Apr 26 09:22:02 kali PROJECT: DEMON[310460]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:22:02 kali PROJECT: DEMON[310460]: MAIN: Task has been finished.
-Apr 26 09:22:04 kali PROJECT: DEMON[310492]: MAIN: Task has been started.
-Apr 26 09:22:04 kali PROJECT: DEMON[310493]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:22:04 kali PROJECT: DEMON[310493]: BROWSER_DIR: Creating directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA
-Apr 26 09:22:04 kali PROJECT: DEMON[310493]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik16MB.txt
-Apr 26 09:22:04 kali PROJECT: DEMON[310493]: COPY_BIG: Copying big files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik64MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik64MB.txt
-Apr 26 09:22:04 kali PROJECT: DEMON[310493]: MAIN: Task has been finished.
-Apr 26 09:22:06 kali PROJECT: DEMON[310532]: MAIN: Task has been started.
-Apr 26 09:22:06 kali PROJECT: DEMON[310533]: BROWSER_SAD: File /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik8MB.txt was removed since /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik8MB.txt file doesn't exist
-Apr 26 09:22:06 kali PROJECT: DEMON[310533]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:22:07 kali PROJECT: DEMON[310533]: MAIN: Task has been finished.
-Apr 26 09:22:09 kali PROJECT: DEMON[310565]: MAIN: Task has been started.
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: MAIN: SIGUSR1 provided...
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: MAIN: Waking up the d(a)emon...
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: BROWSER_SAD: Directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderB was removed since /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderB directory doesn't exist 
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: BROWSER_DIR: Creating directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik16MB.txt
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: COPY_BIG: Copying big files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik64MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik64MB.txt
-Apr 26 09:22:14 kali PROJECT: DEMON[310566]: MAIN: Task has been finished.
-Apr 26 09:23:24 kali PROJECT: DEMON[311002]: MAIN: Task has been started.
-Apr 26 09:23:24 kali PROJECT: DEMON[311003]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:23:24 kali PROJECT: DEMON[311003]: MAIN: Task has been finished.
-Apr 26 09:23:26 kali PROJECT: DEMON[311034]: MAIN: Task has been started.
-Apr 26 09:23:26 kali PROJECT: DEMON[311035]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:23:26 kali PROJECT: DEMON[311035]: BROWSER_DIR: Creating directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA
-Apr 26 09:23:26 kali PROJECT: DEMON[311035]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik16MB.txt
-Apr 26 09:23:26 kali PROJECT: DEMON[311035]: COPY_BIG: Copying big files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik64MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik64MB.txt
-Apr 26 09:23:26 kali PROJECT: DEMON[311035]: MAIN: Task has been finished.
-Apr 26 09:23:28 kali PROJECT: DEMON[311074]: MAIN: Task has been started.
-Apr 26 09:23:28 kali PROJECT: DEMON[311075]: BROWSER_SAD: File /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik8MB.txt was removed since /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik8MB.txt file doesn't exist
-Apr 26 09:23:28 kali PROJECT: DEMON[311075]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:23:28 kali PROJECT: DEMON[311075]: MAIN: Task has been finished.
-Apr 26 09:23:30 kali PROJECT: DEMON[311107]: MAIN: Task has been started.
-Apr 26 09:23:35 kali PROJECT: DEMON[311108]: MAIN: SIGUSR1 provided...
-Apr 26 09:23:35 kali PROJECT: DEMON[311108]: MAIN: Waking up the d(a)emon...
-Apr 26 09:23:35 kali PROJECT: DEMON[311108]: BROWSER_SAD: Directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderB was removed since /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderB directory doesn't exist 
-Apr 26 09:23:35 kali PROJECT: DEMON[311108]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
-Apr 26 09:23:36 kali PROJECT: DEMON[311108]: BROWSER_DIR: Creating directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA
-Apr 26 09:23:36 kali PROJECT: DEMON[311108]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik16MB.txt
-Apr 26 09:23:36 kali PROJECT: DEMON[311108]: COPY_BIG: Copying big files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik64MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik64MB.txt
-Apr 26 09:23:36 kali PROJECT: DEMON[311108]: MAIN: Task has been finished.
+Apr 26 09:38:46 kali PROJECT: DEMON[315981]: MAIN: Task has been started.
+Apr 26 09:38:46 kali PROJECT: DEMON[315982]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
+Apr 26 09:38:46 kali PROJECT: DEMON[315982]: MAIN: Wrapping things up...
+Apr 26 09:38:47 kali PROJECT: DEMON[315982]: MAIN: Task has been finished.
+Apr 26 09:38:48 kali PROJECT: DEMON[316016]: MAIN: Task has been started.
+Apr 26 09:38:48 kali PROJECT: DEMON[316020]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
+Apr 26 09:38:48 kali PROJECT: DEMON[316020]: BROWSER_DIR: Creating directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA
+Apr 26 09:38:48 kali PROJECT: DEMON[316020]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik16MB.txt
+Apr 26 09:38:48 kali PROJECT: DEMON[316020]: COPY_BIG: Copying big files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik64MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik64MB.txt
+Apr 26 09:38:49 kali PROJECT: DEMON[316020]: MAIN: Wrapping things up...
+Apr 26 09:38:50 kali PROJECT: DEMON[316020]: MAIN: Task has been finished.
+Apr 26 09:38:51 kali PROJECT: DEMON[316060]: MAIN: Task has been started.
+Apr 26 09:38:51 kali PROJECT: DEMON[316061]: BROWSER_SAD: File /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik8MB.txt was removed since /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik8MB.txt file doesn't exist
+Apr 26 09:38:51 kali PROJECT: DEMON[316061]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
+Apr 26 09:38:51 kali PROJECT: DEMON[316061]: MAIN: Wrapping things up...
+Apr 26 09:38:52 kali PROJECT: DEMON[316061]: MAIN: Task has been finished.
+Apr 26 09:38:53 kali PROJECT: DEMON[316099]: MAIN: Task has been started.
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: MAIN: SIGUSR1 provided...
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: MAIN: Waking up the d(a)emon...
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: BROWSER_SAD: Directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderB was removed since /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderB directory doesn't exist 
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/plik16MB.txt
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: BROWSER_DIR: Creating directory /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: COPY_SMALL: Copying small files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik16MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik16MB.txt
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: COPY_BIG: Copying big files from /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderA/SubFolderA/plik64MB.txt to /home/kali/ProjSO/ProjOne/SynchronizationDaemon/FolderB/SubFolderA/plik64MB.txt
+Apr 26 09:38:58 kali PROJECT: DEMON[316100]: MAIN: Wrapping things up...
+Apr 26 09:38:59 kali PROJECT: DEMON[316100]: MAIN: Task has been finished.

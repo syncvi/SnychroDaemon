@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <string.h>
 volatile int flag = 0;
-//TODO: formating and shit
+
 void handler(int signum)
 {
     if (signum == SIGUSR1)
@@ -69,17 +69,17 @@ int main(int argc, char* argv[])
     char* destination = argv[2];
     struct stat status1;
     struct stat status2; // for testing a file type
-    while ((choice = getopt(argc, argv, "Rh:T:S:")) != -1)
+    while ((choice = getopt(argc, argv, "Rh:t:s:")) != -1)
     {
         switch (choice)
         {
         case 'R':
             isRecursive = 1;
             break;
-        case 'T':
+        case 't':
             time = atoi(optarg);
             break;
-        case 'S':
+        case 's':
             filesize = atoi(optarg);
             break;
         case '?':

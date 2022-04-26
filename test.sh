@@ -18,7 +18,7 @@ rm -rf FolderB
 mkdir FolderB
 
 sleep 1s
-./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -T 0 -S 32000000
+./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -t 0 -s 32000000
 sleep 1s
 echo "Copying done listing of FolderA"
 ls $SCRIPTPATH/FolderA
@@ -39,7 +39,7 @@ rm -rf FolderB
 mkdir FolderB
 
 sleep 1s
-./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -R -T 0 -S 32000000
+./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -R -t 0 -s 32000000
 sleep 1s
 echo "Copying done listing of FolderA"
 ls FolderA
@@ -72,7 +72,7 @@ ls FolderB
 echo " "
 
 sleep 1s
-./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -T 0 -S 32000000
+./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -t 0 -s 32000000
 sleep 1s
 echo "Copying done listing of FolderA"
 ls FolderA
@@ -100,7 +100,7 @@ dd if=/dev/zero of=FolderB/SubFolderB/plik8MB.txt count=8 bs=1MB status=none
 dd if=/dev/zero of=FolderB/SubFolderB/SubFolderC/plik8MB.txt count=8 bs=1MB status=none
 
 sleep 1s
-./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -R -S 32000000
+./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -R -s 32000000
 sleep 5s
 pidprogramu="$(pidof ./syndi)"
 kill -s SIGUSR1 $pidprogramu

@@ -6,8 +6,8 @@ Aby program działał poprawnie oba katalogi muszą istnieć, oraz ścieżki nie
 
 2. Parametry opcjonalne:
     -R – pozwala na rekurencyjne sprawdzenie katalogów.
-    -T [czas w sekundach] – ustawienie czasu, po którym demon na zacząć synchronizację,
-    -S [rozmiar] – ustawienie rozmiaru, po którym demon ma sprawdzać, którą funkcję kopiującą ma użyć. Bez użycia tego parametru wszystkie pliki są kopiowane za pomocą niskopoziomowych funkcji read/write. Pliki wyższej niż parametr rozmiar będą kopiowane za pomocą dedykowanego wywołania sendfile.
+    -t [czas w sekundach] – ustawienie czasu, po którym demon na zacząć synchronizację,
+    -s [rozmiar] – ustawienie rozmiaru, po którym demon ma sprawdzać, którą funkcję kopiującą ma użyć. Bez użycia tego parametru wszystkie pliki są kopiowane za pomocą niskopoziomowych funkcji read/write. Pliki wyższej niż parametr rozmiar będą kopiowane za pomocą dedykowanego wywołania sendfile.
     -h – wyświetlenie tej instrukcji
 
 ps aux - wyświetla wszystkie procesy
