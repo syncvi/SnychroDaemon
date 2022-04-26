@@ -1,8 +1,14 @@
 # SynchroDaemon
 --a very cool project with a typo in the url cuz i'm a dumbass
 
-# Install Dependencies:
-...
+# Install Dependencies For Testing Purpose:
+## Valgrind
+### Ubuntu, Debian, etc.
+sudo apt-get install valgrind -y  
+### RHEL, CentOS, Fedora, etc.
+sudo yum install valgrind -y
+### Arch, Manjaro, Garuda, etc
+sudo pacman -Syu valgrind
 
 # Usage/Manual
 1. Parameters: source path, destination path
