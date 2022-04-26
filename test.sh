@@ -1,8 +1,4 @@
 #!/bin/sh
-#make clean
-#make
-#./syndi /home/ogar/Desktop/test /home/ogar/Desktop/test13 -R -T 0 -S 1024
-#pidof ./syndi - gets the process id
 
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 make clean 
@@ -122,11 +118,9 @@ echo " "
 
 echo " "
 echo "Opening syslog"
-#Write only demon logs to syslog
 cat /var/log/syslog | grep "DEMON">> $SCRIPTPATH/syslog.txt
-#display syslog.txt
-#cat $SCRIPTPATH/syslog.txt
 echo "Closing syslog"
 echo " "
-
+rm -rf FolderA
+rm -rf FolderB
 

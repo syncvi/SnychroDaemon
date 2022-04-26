@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
         printf("Not enough arguments provided\n");
         printf("Would you like to see the manual page? (y/n)\n");
         char answer;
-        scanf("%c", &answer);
+        scanf("%c", &answer); //TODO: maybe use a safer function like sscanf instead of scanf
         if (answer == 'y' || answer == 'Y')
         {
             instruction_manual();

@@ -18,4 +18,5 @@
 /*--------------FUNCTIONS GO THERE--------------*/
 void instruction_manual();
 void browseDirectories(char* sourcePath, char* destinationPath, int isRecursive, int size);
+/*--------------FUNCTIONS GO THERE--------------*/
 #endif
