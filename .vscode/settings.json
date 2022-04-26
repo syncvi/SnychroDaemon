@@ -28,7 +28,8 @@
     "**/.vscode/**"
   ],
   "cSpell.words": [
-    "emon"
+    "emon",
+    "Parametry"
   ],
   "files.associations": {
     "string.h": "c"

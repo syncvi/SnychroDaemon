@@ -5,4 +5,5 @@
 main.o
 functionality.o
 syndi
+syslog.txt
 .vscode/settings.json
