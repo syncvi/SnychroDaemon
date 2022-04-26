@@ -64,8 +64,6 @@ int main(int argc, char* argv[])
     syslog(LOG_NOTICE, "MAIN: Task has been started.");
 
     int choice;
-    // if flag requires additional argument, like -s [filesize], thus, another switch will use choice option
-    int choiceOption;
     int isRecursive = 0;
     int time = 300;
     int filesize = __INT_MAX__;

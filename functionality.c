@@ -43,11 +43,11 @@ bool isModified(char *path1, char *path2)
   struct stat _time2;
   if (stat(path1, &_time1) == -1)
   {
-    syslog(LOG_ERR, "ISMODIFIED: Error while checking time. %s", path1);
+    syslog(LOG_ERR, "IS_MODIFIED: Error while checking time. %s", path1);
   }
   if (stat(path2, &_time2) == -1)
   {
-    syslog(LOG_ERR, "ISMODIFIED: Error while checking time. %s", path2);
+    syslog(LOG_ERR, "IS_MODIFIED: Error while checking time. %s", path2);
   }
   if (_time1.st_mtime == _time2.st_mtime)
   {
@@ -123,7 +123,7 @@ void removeDirectory(char *path)
   char pathname[PATH_MAX];
   if (!(dir = opendir(path)))
   {
-    syslog(LOG_ERR, "REMOVE: Error while opening directory: %s", path);
+    syslog(LOG_ERR, "REMOVE_DIR: Error while opening directory: %s", path);
     printf("Error: could not open directory %s", path);
     return;
   }
@@ -138,7 +138,7 @@ void removeDirectory(char *path)
       {
         if (remove(pathname) == -1)
         {
-          syslog(LOG_ERR, "REMOVE: Error while removing file: %s", pathname);
+          syslog(LOG_ERR, "REMOVE_DIR: Error while removing file: %s", pathname);
           printf("Error: could not remove file %s", pathname);
         }
       }
@@ -185,7 +185,7 @@ void removeDirectory(char *path)
 // Copying big files from source to destination using mapping
 void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 {
-  syslog(LOG_NOTICE, "COPY: Copying big files from %s to %s", entry_path_source, entry_path_destination);
+  syslog(LOG_NOTICE, "COPY_BIG: Copying big files from %s to %s", entry_path_source, entry_path_destination);
   int source_fd;
   int destination_fd;
   struct stat stat_buf;
@@ -193,40 +193,40 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
   source_fd = open(entry_path_source, O_RDONLY);
   if (source_fd == -1)
   {
-    syslog(LOG_ERR, "COPY: Error opening source file %s while copying big files", entry_path_source);
+    syslog(LOG_ERR, "COPY_BIG: Error opening source file %s while copying big files", entry_path_source);
     perror("Source_fd error:");
     exit(EXIT_FAILURE);
   }
   if (fstat(source_fd, &stat_buf))
   {
-    syslog(LOG_ERR, "COPY: Error getting file size of %s while copying big files", entry_path_source);
+    syslog(LOG_ERR, "COPY_BIG: Error getting file size of %s while copying big files", entry_path_source);
     perror("Fstat error:");
     exit(EXIT_FAILURE);
   }
   destination_fd = open(entry_path_destination, O_RDWR | O_CREAT | O_TRUNC, 0644);
   if (ftruncate(destination_fd, stat_buf.st_size))
   {
-    syslog(LOG_ERR, "COPY: Error truncating file %s while copying big files", entry_path_destination);
+    syslog(LOG_ERR, "COPY_BIG: Error truncating file %s while copying big files", entry_path_destination);
     perror("Ftruncate error:");
     exit(EXIT_FAILURE);
   }
   if (destination_fd == -1)
   {
-    syslog(LOG_ERR, "COPY: Error opening destination file %s while copying big files", entry_path_destination);
+    syslog(LOG_ERR, "COPY_BIG: Error opening destination file %s while copying big files", entry_path_destination);
     perror("Destination_fd error:");
     exit(EXIT_FAILURE);
   }
   char *source_map = mmap(NULL, stat_buf.st_size, PROT_READ, MAP_PRIVATE, source_fd, 0);
   if (source_map == MAP_FAILED)
   {
-    syslog(LOG_ERR, "COPY: Error mapping source file %s while copying big files", entry_path_source);
+    syslog(LOG_ERR, "COPY_BIG: Error mapping source file %s while copying big files", entry_path_source);
     perror("Source_map error:");
     exit(EXIT_FAILURE);
   }
   char *destination_map = mmap(NULL, stat_buf.st_size, PROT_WRITE, MAP_SHARED, destination_fd, 0);
   if (destination_map == MAP_FAILED)
   {
-    syslog(LOG_ERR, "COPY: Error mapping destination file %s while copying big files", entry_path_destination);
+    syslog(LOG_ERR, "COPY_BIG: Error mapping destination file %s while copying big files", entry_path_destination);
     perror("Destination_map error:");
     exit(EXIT_FAILURE);
   }
@@ -240,14 +240,14 @@ void copyBigFiles(char *entry_path_source, char *entry_path_destination)
 // Function copying files smaller than gives size if parameter -T was used
 void copySmallFiles(char *entry_path_source, char *entry_path_destination)
 {
-  syslog(LOG_NOTICE, "COPY: Copying small files from %s to %s", entry_path_source, entry_path_destination);
+  syslog(LOG_NOTICE, "COPY_SMALL: Copying small files from %s to %s", entry_path_source, entry_path_destination);
   int src_fd, dst_fd, n;
   unsigned char buffer[4096];
 
   src_fd = open(entry_path_source, O_RDONLY);
   if (src_fd == -1)
   {
-    syslog(LOG_ERR, "COPY: Error opening source file %s while copying small files", entry_path_source);
+    syslog(LOG_ERR, "COPY_SMALL: Error opening source file %s while copying small files", entry_path_source);
     printf("Error opening source file: %s\n", entry_path_source);
     exit(EXIT_FAILURE);
   }
@@ -255,7 +255,7 @@ void copySmallFiles(char *entry_path_source, char *entry_path_destination)
   dst_fd = open(entry_path_destination, O_WRONLY | O_CREAT | O_EXCL, S_IRWXU | S_IRWXG | S_IROTH);
   if (dst_fd == -1)
   {
-    syslog(LOG_ERR, "COPY: Error opening destination file %s while copying small files", entry_path_destination);
+    syslog(LOG_ERR, "COPY_SMALL: Error opening destination file %s while copying small files", entry_path_destination);
     printf("Error opening destination file: %s\n", entry_path_destination);
     exit(EXIT_FAILURE);
   }
@@ -264,14 +264,14 @@ void copySmallFiles(char *entry_path_source, char *entry_path_destination)
   {
     if (write(dst_fd, buffer, n) != n)
     {
-      syslog(LOG_ERR, "COPY: Error writing to destination file %s while copying small files", entry_path_destination);
+      syslog(LOG_ERR, "COPY_SMALL: Error writing to destination file %s while copying small files", entry_path_destination);
       printf("Error writing to destination file: %s\n", entry_path_destination);
       exit(EXIT_FAILURE);
     }
   }
   if (n < 0)
   {
-    syslog(LOG_ERR, "COPY: Error reading from source file %s while copying small files", entry_path_source);
+    syslog(LOG_ERR, "COPY_SMALL: Error reading from source file %s while copying small files", entry_path_source);
     printf("Error reading from source file: %s\n", entry_path_source);
     exit(EXIT_FAILURE);
   }
@@ -285,7 +285,7 @@ void howToCopy(char *sourcePath, char *destinationPath, int size)
   struct stat f_copy;
   if (stat((sourcePath), &f_copy) == -1)
   {
-    syslog(LOG_ERR, "COPY: Error getting file stats while copying %s to %s", sourcePath, destinationPath);
+    syslog(LOG_ERR, "HT_COPY: Error getting file stats while copying %s to %s", sourcePath, destinationPath);
     perror("Error getting file stats");
     exit(EXIT_FAILURE);
   }
@@ -303,7 +303,7 @@ void browseSourceAndDestination(char *sourcePath, char *destinationPath, int isR
   char destination[1024];
   if (!(dir = opendir(sourcePath)))
   {
-    syslog(LOG_ERR, "BROWSE: Could not open directory");
+    syslog(LOG_ERR, "BROWSER_SAD: Could not open directory");
     perror("Error opening directory");
     return;
   }
@@ -318,7 +318,7 @@ void browseSourceAndDestination(char *sourcePath, char *destinationPath, int isR
         if (checkIfFileExists(path, destination) == 0)
         {
           remove(path);
-          syslog(LOG_NOTICE, "BROWSE: File %s was removed since %s file doesn't exist", path, destination);
+          syslog(LOG_NOTICE, "BROWSER_SAD: File %s was removed since %s file doesn't exist", path, destination);
         }
       }
       if (entry->d_type == DT_DIR)
@@ -326,7 +326,7 @@ void browseSourceAndDestination(char *sourcePath, char *destinationPath, int isR
         if (checkIfDirectoryExists(destination) == 0 && checkIfDirectoryExists(path) == 1 && isRecursive == 1)
         {
           removeDirectory(path);
-          syslog(LOG_NOTICE, "BROWSE: Directory %s was removed since %s directory doesn't exist ", path,destination);
+          syslog(LOG_NOTICE, "BROWSER_SAD: Directory %s was removed since %s directory doesn't exist ", path,destination);
         }
       }
     }
@@ -342,7 +342,7 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
   char destination[1024];
   if (!(dir = opendir(sourcePath)))
   {
-    syslog(LOG_ERR, "BROWSE: Could not open directory");
+    syslog(LOG_ERR, "BROWSER_DIR: Could not open directory");
     return;
   }
 
@@ -362,7 +362,7 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
         {
           if (checkIfDirectoryExists(destination) == 0)
           {
-            syslog(LOG_NOTICE, "BROWSE: Creating directory %s", destination);
+            syslog(LOG_NOTICE, "BROWSER_DIR: Creating directory %s", destination);
             mkdir(destination, S_IRWXU | S_IRWXG | S_IROTH);
           }
           browseDirectories(path, destination, isRecursive, size);
@@ -373,7 +373,7 @@ void browseDirectories(char *sourcePath, char *destinationPath, int isRecursive,
       {
         if (checkIfFileExists(path, destination) == 1)
         {
-          syslog(LOG_NOTICE, "BROWSE: File %s already exists in %s", entry->d_name, destinationPath);
+          syslog(LOG_NOTICE, "BROWSER_DIR: File %s already exists in %s", entry->d_name, destinationPath);
         }
         else
         {
