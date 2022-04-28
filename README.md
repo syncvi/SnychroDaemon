@@ -27,3 +27,4 @@ sudo pacman -Syu valgrind
 ps aux - displaying all processes
 
 kill -s SIGUSR1 [pid] where pid is an id of your daemon process (remove square brackets).
+perl -MDate::Parse -ne 'print if/^(.{15})\s/&&str2time($1)>time-60'
