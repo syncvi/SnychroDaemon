@@ -101,11 +101,8 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
 int checkIfDirectoryExists(char* path)
 {
   struct stat s_copy;
-  if (stat((path), &s_copy) == -1)
-  {
-    syslog(LOG_ERR, "CHECK_DIR: Error while checking if directory exists: %s", path);
-    printf("Error: could not open file: %s", path);
-  }
+  stat(path, &s_copy);
+
   if (S_ISDIR(s_copy.st_mode)) return 1;
   else return 0;
 }

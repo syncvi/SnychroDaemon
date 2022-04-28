@@ -1,7 +1,8 @@
 #!/bin/sh
 
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-make reload
+make clean
+make
 rm -rf syslog.txt
 rm -rf valgrindlogs.txt
 #sudo truncate -s 0 /var/log/syslog
@@ -11,13 +12,11 @@ echo "Program will not use any extra parameters."
 echo "Since the base waiting time is 300 seconds, SIGUSR1 will be sent after 5 seconds"
 
 echo "Creating test files..."
-rm -rf FolderA
 mkdir FolderA
 dd if=/dev/zero of=FolderA/plik16MB.txt count=16 bs=1MB status=none
 mkdir FolderA/SubFolderA
 dd if=/dev/zero of=FolderA/SubFolderA/plik64MB.txt count=16 bs=4MB status=none
 dd if=/dev/zero of=FolderA/SubFolderA/plik16MB.txt count=16 bs=1MB status=none
-rm -rf FolderB
 mkdir FolderB
 sleep 1s
 
@@ -206,7 +205,7 @@ tree FolderB
 
 echo "Running program..."
 sleep 3s
-valgrind --leak-check=yes --track-origins=yes --log-file=valgrindlogs.txt ./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -R -t 0 -s 32000000
+valgrind --leak-check=yes --log-file=valgrindlogs.txt ./syndi $SCRIPTPATH/FolderA $SCRIPTPATH/FolderB -R -t 0 -s 32000000
 sleep 3s
 
 echo "Copying files... Done."
