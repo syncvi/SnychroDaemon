@@ -81,26 +81,31 @@ int checkIfFileExists(char* sourcePath, char* destinationPath)
     printf("Error: could not open file: %s", sourcePath);
   }
   stat((destinationPath), &d_copy);
-  if (s_copy.st_size == d_copy.st_size)
+  if (s_copy.st_ino == d_copy.st_ino)
   {
-    if (isModified(sourcePath, destinationPath)) return 1;
-
-    else
+    if (s_copy.st_size == d_copy.st_size)
     {
-      setModified(sourcePath, destinationPath);
-      return 1;
+     if (isModified(sourcePath, destinationPath)) return 1;
+     else
+      {
+        setModified(sourcePath, destinationPath);
+        return 1;
+      }
     }
+    else return 0; 
   }
-
-  else return 0;
+  else return 0; 
 }
 
 // check if destination directory exists
 int checkIfDirectoryExists(char* path)
 {
   struct stat s_copy;
-  stat(path, &s_copy);
-
+  if (stat((path), &s_copy) == -1)
+  {
+    syslog(LOG_ERR, "CHECK_DIR: Error while checking if directory exists: %s", path);
+    printf("Error: could not open file: %s", path);
+  }
   if (S_ISDIR(s_copy.st_mode)) return 1;
   else return 0;
 }

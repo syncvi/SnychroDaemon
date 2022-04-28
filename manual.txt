@@ -1,16 +1,15 @@
-1. Parametry wymagane:
-    [sciezka_zrodlowa] – podanie dla demona ściezki katalogu z którego kopiujemy
-    [sciezka_docelowa] – podanie dla demona ściezki katalogu do którego kopiujemy 
-
-Aby program działał poprawnie oba katalogi muszą istnieć, oraz ścieżki nie mogą być takie same
-
-2. Parametry opcjonalne:
-    -R – pozwala na rekurencyjne sprawdzenie katalogów.
-    -t [czas w sekundach] – ustawienie czasu, po którym demon na zacząć synchronizację,
-    -s [rozmiar] – ustawienie rozmiaru, po którym demon ma sprawdzać, którą funkcję kopiującą ma użyć. Bez użycia tego parametru wszystkie pliki są kopiowane za pomocą niskopoziomowych funkcji read/write. Pliki wyższej niż parametr rozmiar będą kopiowane za pomocą dedykowanego wywołania sendfile.
-    -h – wyświetlenie tej instrukcji
-
-ps aux - wyświetla wszystkie procesy
-kill -s SIGUSR1 pid, gdzie pid to id procesu
-
-
+1. Required parameters: 
+    Source path - Path to directory, from which deamon will copy files.
+    Destination path - Path to directory, to which deamon will copy files.
+2. Optional parameters:
+    -R - Browsing directories recursively.
+    -t - Set time in seconds, after which deamon will wake up. 
+        Default: 300s.
+    -s - Set file size in bytes, files smaller than target size will be copied using read/write, files larger than target size will be copied using mmap/write. 
+        Default: no cap.
+    -h - Displays manual.
+    -help - Displays manual.
+3. Examples:
+    ./syndi /home/ogar/Desktop/PSO/FolderA /home/ogar/Desktop/PSO/FolderB -R -t 0 -s 32000000
+    ./syndi /home/ogar/Desktop/PSO/FolderA /home/ogar/Desktop/PSO/FolderB -t 30 -s 12345678
+    ./syndi -h

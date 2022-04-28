@@ -40,6 +40,15 @@ int main(int argc, char* argv[])
 
     if (argc < 3)
     {
+        //if first argument is -h or -help display manual
+        if(strcmp(argv[1],"-h") == 0 || strcmp(argv[1], "-help") == 0)
+        {
+            instruction_manual();
+            syslog(LOG_NOTICE, "MAIN: Manual page displayed");
+            exit(0);
+        }
+            
+
         syslog(LOG_ERR, "MAIN: Not enough arguments provided");
         printf("Not enough arguments provided\n");
         printf("Would you like to see the manual page? (y/n)\n");
@@ -49,7 +58,7 @@ int main(int argc, char* argv[])
         {
             instruction_manual();
             syslog(LOG_NOTICE, "MAIN: Manual page displayed");
-            exit(1);
+            exit(0);
         }
         else
         {
@@ -154,9 +163,8 @@ int main(int argc, char* argv[])
     }
     /*------------------------------------Copying Files------------------------------------*/
     browseDirectories(source, destination, isRecursive, filesize);
-    syslog(LOG_NOTICE, "MAIN: Wrapping things up...");
-    sleep(1);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
+    syslog(LOG_NOTICE, " ");
     closelog();
     exit(EXIT_SUCCESS);
 }
