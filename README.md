@@ -22,6 +22,10 @@ sudo pacman -Syu valgrind
       
       -h - displaying manual.
       
+## Other Dependencies
+### Tree:
+sudo apt-get install tree
+      
 # Useful bash commands:
 
 ps aux - displaying all processes
