@@ -14,17 +14,27 @@ echo "Since the base waiting time is 300 seconds, SIGUSR1 will be sent after 5 s
 echo "Creating test files..."
 mkdir FolderA
 dd if=/dev/zero of=FolderA/plik16MB.txt count=16 bs=1MB status=none
+dd if=/dev/zero of=FolderA/A.txt count=1 bs=1MB status=none
 mkdir FolderA/SubFolderA
 dd if=/dev/zero of=FolderA/SubFolderA/plik64MB.txt count=16 bs=4MB status=none
 dd if=/dev/zero of=FolderA/SubFolderA/plik16MB.txt count=16 bs=1MB status=none
 mkdir FolderB
+dd if=/dev/zero of=FolderB/A.txt count=1 bs=1MB status=none
+touch -d "3 hours ago" FolderB/A.txt
 sleep 1s
 
 echo "Creating test files... Done."
 echo "Listing test files..."
 tree FolderA
+echo " "
+echo "File in folder A:"
+stat -c '%y' FolderA/A.txt
+echo " "
 tree FolderB
-
+echo " "
+echo "File in folder B:"
+stat -c '%y' FolderB/A.txt
+echo " "
 
 echo "Running program..."
 sleep 1s
@@ -47,7 +57,15 @@ sleep 1s
 echo "Copying files... Done."
 echo "Showing results..."
 tree FolderA
+echo " "
+echo "File in folder A:"
+stat -c '%y' FolderA/A.txt
+echo " "
 tree FolderB
+echo " "
+echo "File in folder B:"
+stat -c '%y' FolderB/A.txt
+echo " "
 
 echo "Removing test files..."
 rm -rf FolderA
@@ -86,6 +104,7 @@ echo "Showing results..."
 tree FolderA
 tree FolderB
 
+echo " "
 echo "Removing test files..."
 rm -rf FolderA
 rm -rf FolderB
