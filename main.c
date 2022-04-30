@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
     /*------------------------------------Copying Files------------------------------------*/
     browseDirectories(source, destination, isRecursive, filesize);
     syslog(LOG_NOTICE, "MAIN: Task has been finished.");
-    syslog(LOG_NOTICE, "-----------------------------------------------------------------------------------------------------------");
+    syslog(LOG_NOTICE, "----------------------------------------------------------------------------------------------------------");
     closelog();
     exit(EXIT_SUCCESS);
 }

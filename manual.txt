@@ -10,6 +10,6 @@
     -h - Displays manual.
     -help - Displays manual.
 3. Examples:
-    ./syndi /home/ogar/Desktop/PSO/FolderA /home/ogar/Desktop/PSO/FolderB -R -t 0 -s 32000000
-    ./syndi /home/ogar/Desktop/PSO/FolderA /home/ogar/Desktop/PSO/FolderB -t 30 -s 12345678
+    ./syndi /home/user/FolderA /home/user/FolderB -R -t 0 -s 32000000
+    ./syndi /home/user/FolderA /home/user/FolderB -t 30 -s 12345678
     ./syndi -h
