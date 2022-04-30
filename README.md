@@ -10,7 +10,7 @@ sudo yum install valgrind -y
 ### Arch, Manjaro, Garuda, etc
 sudo pacman -Syu valgrind
 
-# Usage/Manual
+## Usage/Manual
 1. Parameters: source path, destination path
 2. Options :
 
@@ -26,7 +26,7 @@ sudo pacman -Syu valgrind
 ### Tree:
 sudo apt-get install tree
       
-# Useful bash commands:
+## Useful bash commands:
 
 ps aux - displaying all processes
 
